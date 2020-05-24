@@ -50,4 +50,8 @@ function uInfo = exportUnitInfo(obj, iCluster)
     if ~isempty(obj.unitVppRaw)
         uInfo.vpp = obj.unitVppRaw(iCluster);
     end
+    
+    if ~isempty(obj.unitSNR)
+        uInfo.SNR = obj.unitSNR(iCluster);
+    end
 end

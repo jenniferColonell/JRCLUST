@@ -5,7 +5,7 @@ function plotFigPos(hFigPos, hClust, hCfg, selected, maxAmp)
         c2Data = hClust.exportUnitInfo(selected(2));
     end
 
-    if ~hFigPos.hasAxes('default')
+    if ~hFigPos.hasAxes('default');
         hFigPos.addAxes('default');
     else
         hFigPos.axApply('default', @cla);
@@ -22,6 +22,10 @@ function plotFigPos(hFigPos, hClust, hCfg, selected, maxAmp)
             figTitle = sprintf('%s\n%0.1fuVmin, %0.1fuVpp, SNR:%0.1f ISI%%:%2.3f IsoDist:%0.1f L-rat:%0.1f', ...
                 figTitle, c1Data.peaksRaw, c1Data.vpp, c1Data.SNR, c1Data.ISIRatio*100, c1Data.IsoDist,  c1Data.LRatio);
         catch
+           % Earlier version of TemplateClustering omitted SNR calc
+           figTitle = sprintf('%s\n%0.1fuVmin, %0.1fuVpp, ISI%%:%2.3f IsoDist:%0.1f L-rat:%0.1f', ...
+                figTitle, c1Data.peaksRaw, c1Data.vpp, c1Data.ISIRatio*100, c1Data.IsoDist,  c1Data.LRatio);
+ 
         end
     else
         nSpikes2 = hClust.unitCount(c2Data.cluster);

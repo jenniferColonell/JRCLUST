@@ -1,7 +1,7 @@
 function siteThresh = computeThreshold(obj, samplesIn)
     %COMPUTETHRESHOLD Compute sitewise threshold for samplesIn
     maxSample = 1e5;
-
+    
     try
         samplesIn = jrclust.utils.tryGpuArray(samplesIn, obj.hCfg.useGPU);
         siteThresh = jrclust.utils.estimateRMS(samplesIn, maxSample)*obj.hCfg.qqFactor;

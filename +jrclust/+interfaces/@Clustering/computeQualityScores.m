@@ -1,5 +1,6 @@
 function computeQualityScores(obj, updateMe)
     %COMPUTEQUALITYSCORES Get cluster quality scores
+    fprintf('parent computeQualityScores\n');
     if nargin < 2
         updateMe = [];
     end

@@ -1,7 +1,8 @@
 function computeQualityScores(obj, updateMe)
+    fprintf( 'calling templateClustering computeQualityScores\n');
     %COMPUTEQUALITYSCORES Get cluster quality scores
     computeQualityScores@jrclust.interfaces.Clustering(obj, updateMe);
-    fprintf( 'DensityPeak ComputeQualityScores\n');
+
     unitVmin = squeeze(min(obj.meanWfGlobal));
     unitPeaks_ = jrclust.utils.rowColSelect(unitVmin, obj.clusterSites, 1:obj.nClusters);
 
