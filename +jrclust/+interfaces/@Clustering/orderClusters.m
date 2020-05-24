@@ -1,11 +1,14 @@
 function argsort = orderClusters(obj, by)
     %ORDERCLUSTERS Arrange cluster ID numbers by some criterion
-    if nargin < 2 || isempty(by) || (~strcmp(by, 'Y + X') && ~isprop(obj, by))
+    if nargin < 2 || isempty(by) || (~strcmp(by, 'Y + X') && ~strcmp(by,'shank then Y') && ~isprop(obj, by))
         by = 'clusterSites';
     end
 
     if strcmpi(by, 'Y + X') && ~isempty(obj.clusterCentroids)
         [~, argsort] = sort(sum(obj.clusterCentroids, 2), 'ascend');
+    elseif strcmpi(by, 'shank then Y') && ~isempty(obj.clusterCentroids)
+        clusterShanks = obj.hCfg.shankMap(obj.clusterSites);
+        [~, argsort] = sortrows( [clusterShanks, obj.clusterCentroids(:,2)]);
     elseif isprop(obj, by)
         [~, argsort] = sort(obj.(by), 'ascend');
     end

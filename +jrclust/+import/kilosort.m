@@ -26,7 +26,7 @@ cfgData.dataType = params.dtype;
 cfgData.headerOffset = params.offset;
 cfgData.siteMap = channelMap;
 cfgData.siteLoc = channelPositions;
-cfgData.shankMap = ones(size(channelMap), 'like', channelMap); % this can change with a prm file
+cfgData.shankMap = ones(size(channelMap), 'like', channelMap); % this can change with a prm or metadata file
 cfgData.rawRecordings = {params.dat_path};
 
 % check for existence of .prm file. if exists use it as a template.
@@ -111,6 +111,9 @@ end
 if ~isempty(metafile)
     SMeta_ = jrclust.utils.loadMetadata(metafile);
     hCfg.bitScaling = SMeta_.bitScaling;
+    hCfg.shankMap = SMeta_.shanks(hCfg.siteMap) + 1;
+    size(hCfg.shankMap)
+    hCfg.shankMap
 else
     hCfg.bitScaling = 1;
 end
