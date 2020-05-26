@@ -1,7 +1,5 @@
 {
     "vector fields": [
-        "clusterCenters",
-        "nSitesOverThresh",
-        "unitSNR"
+        "clusterCenters"
     ]
 }

@@ -1394,6 +1394,37 @@
             },
             "section": ["display"]
         },
+        "pcPair": {
+            "description": "Pair of PCs to display",
+            "comment": "",
+            "default_value": [1, 2],
+            "validation": {
+                "classes": ["numeric"],
+                "attributes": [
+                    "real",
+                    "positive",
+                    "increasing",
+                    "numel", 2,
+                    "<=", 3
+                ],
+                "postapply": "@(x) x(:)'"
+            },
+            "section": ["display"]
+        },
+        "plotTrialTime": {
+            "description": "Plot trial intervals in feature-vs-time view",
+            "comment": "",
+            "default_value": false,
+            "validation": {
+                "classes": ["logical", "double"],
+                "attributes": ["scalar"],
+                "postapply": "@(x) logical(x)"
+            },
+            "section": [
+                "trial",
+                "display"
+            ]
+        },
         "projTimeLimits": {
             "description": "Time range (in s) to display in feature projection view",
             "comment": "",

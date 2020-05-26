@@ -1,12 +1,13 @@
 function autoDelete(obj)
-    %AUTODELETE Automatically delete clusters by SNR/spike count
+    %AUTODELETE Automatically delete clusters by SNR/spike count, if the
+    %SNR property is available; otherwise use Vpp
     if obj.isWorking
         jrclust.utils.qMsgBox('An operation is in progress.');
         return;
     end
-
+    
     hFigDelete = jrclust.views.Figure('', [.5 .7 .35 .3], ['Delete Auto: ', obj.hCfg.sessionName], 0, 0);
-    if isfield(obj.hClust,'unitSNR')
+    if isprop(obj.hClust,'unitSNR')
         hFigDelete.addPlot('hPlotSNR', obj.hClust.unitSNR(:), obj.hClust.unitCount(:), '.'); % show cluster SNR and spike count
         hFigDelete.axApply('default', @xlabel, 'Unit SNR');
     else
@@ -23,8 +24,9 @@ function autoDelete(obj)
     % there is a field called "recDurationSec" but it's empty so this is
     % the best I can do. -Adrian Bondy
     unitFR = obj.hClust.unitCount(:)./double(recDurationSecApprox);
-    if isfield(obj.hClust,'unitSNR')
-        dlgAns = inputdlg({'Min Unit SNR:', 'Max Unit SNR:', sprintf('Min Unit %cVpp:',956),sprintf('Max Unit %cVpp:',956),'Minimum # spikes/unit:','Minimum Firing Rate:'}, 'Auto-deletion based on SNR', 1, {'5', 'inf', '20','inf', '100','0'}); % also ask about # spikes/unit (or firing rate) @TODO
+    if isprop(obj.hClust,'unitSNR')
+        %dlgAns = inputdlg({'Min Unit SNR:', 'Max Unit SNR:', sprintf('Min Unit %cVpp:',956),sprintf('Max Unit %cVpp:',956),'Minimum # spikes/unit:','Minimum Firing Rate:'}, 'Auto-deletion based on SNR', 1, {'5', 'inf', '20','inf', '100','0'}); % also ask about # spikes/unit (or firing rate) @TODO
+        dlgAns = inputdlg({'Min Unit SNR:', 'Max Unit SNR:','Minimum # spikes/unit:','Minimum Firing Rate:'}, 'Auto-deletion based on SNR', 1, {'5', 'inf', '20','0'}); % also ask about # spikes/unit (or firing rate) @TODO
     else
         dlgAns = inputdlg({sprintf('Min Unit %cVpp:',956),sprintf('Max Unit %cVpp:',956),'Minimum # spikes/unit:','Firing Rate:'}, 'Auto-deletion based on SNR', 1, {'20','inf', '100','0'}); % also ask about # spikes/unit (or firing rate) @TODO
     end
@@ -34,13 +36,13 @@ function autoDelete(obj)
         closehDelete;
         return;
     end
-    if isfield(obj.hClust,'unitSNR')
+    if isprop(obj.hClust,'unitSNR')
         snrMin = str2double(dlgAns{1});
         snrMax = str2double(dlgAns{2});
-        vppmin = str2double(dlgAns{3});
-        vppmax = str2doubl(dlgAns{4});
-        minCount = round(str2double(dlgAns{5}));
-        minfr = str2double(dlgAns{6});
+        %vppmin = str2double(dlgAns{3});
+        %vppmax = str2doubl(dlgAns{4});
+        minCount = round(str2double(dlgAns{3}));
+        minfr = str2double(dlgAns{4});
     else
         vppmin = str2double(dlgAns{1});
         vppmax = str2double(dlgAns{2});
@@ -55,8 +57,9 @@ function autoDelete(obj)
             return
         end
     end
-    if isfield(obj.hClust,'unitSNR')
-        deleteMe = find(obj.hClust.unitSNR(:) < snrMin | obj.hClust.unitCount(:) < minCount | obj.hClust.unitSNR(:) > snrMax | unitFR < minfr | obj.hClust.unitVpp < vppmin | obj.hClust.unitVpp > vppmax);
+    if isprop(obj.hClust,'unitSNR')
+        %deleteMe = find(obj.hClust.unitSNR(:) < snrMin | obj.hClust.unitCount(:) < minCount | obj.hClust.unitSNR(:) > snrMax | unitFR < minfr | obj.hClust.unitVpp < vppmin | obj.hClust.unitVpp > vppmax);
+        deleteMe = find(obj.hClust.unitSNR(:) < snrMin | obj.hClust.unitCount(:) < minCount | obj.hClust.unitSNR(:) > snrMax | unitFR < minfr );
     else
         deleteMe = find( obj.hClust.unitCount(:) < minCount | unitFR < minfr | obj.hClust.unitVpp < vppmin | obj.hClust.unitVpp > vppmax);
     end
@@ -73,7 +76,7 @@ function autoDelete(obj)
     end
 
     % delete and update
-    if isfield(obj.hClust,'unitSNR')
+    if isprop(obj.hClust,'unitSNR')
         hFigDelete.toForeground;hold on;
         plot(obj.hClust.unitSNR(deleteMe), obj.hClust.unitCount(deleteMe), 'r.'); % show cluster SNR and spike count
     else

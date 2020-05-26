@@ -62,6 +62,9 @@ classdef (Abstract) Clustering < handle
         unitISIRatio;       % inter-spike interval ratio #(ISI <= 2ms)/#(ISI <= 20ms), per cluster
         unitIsoDist;        % isolation distance
         unitLRatio;         % L-ratio
+        nSitesOverThresh;   % number of sites exceeding the detection threshold, per cluster
+        siteRMS;            % site-wise threshold/qqFactor
+        unitSNR;            % signal-to-noise ratio at peak site (peak/RMS)
     end
 
     %% SORTING RESULTS (IMMUTABLE)
@@ -81,6 +84,8 @@ classdef (Abstract) Clustering < handle
         spikesRaw;          % raw spike traces
         spikesFilt;         % filtered spike traces
         spikeFeatures;      % features which were clustered
+        meanSiteThresh;     % mean sitewise detection threshold over all chunks
+        siteThresh;         % sitewise detection threshold over all chunks
     end
 
     %% CACHED VALUES
@@ -287,5 +292,32 @@ classdef (Abstract) Clustering < handle
         function set.spikeTimes(obj, val)
             obj.dRes.spikeTimes = val;
         end
+        
+        % meanSiteThresh
+        function st = get.meanSiteThresh(obj)
+            if isfield(obj.dRes, 'meanSiteThresh')
+                st = obj.dRes.meanSiteThresh;
+            else
+                st = [];
+            end
+        end
+        function set.meanSiteThresh(obj, val)
+            obj.dRes.meanSiteThresh = val;
+        end
+        
+        % siteThresh
+        function st = get.siteThresh(obj)
+            if isfield(obj.dRes, 'meanSiteThresh') && ~isempty(obj.dRes.meanSiteThresh)
+                st = obj.dRes.meanSiteThresh;
+            elseif isfield(obj.dRes, 'siteThresh') % backwards compatibility
+                st = obj.dRes.siteThresh;
+            else
+                st = [];
+            end
+        end
+        function set.siteThresh(obj, val)
+            obj.dRes.siteThresh = val;
+        end
+
     end
 end

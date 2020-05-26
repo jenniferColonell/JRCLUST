@@ -79,8 +79,7 @@ function S = loadMetadata(metafile)
     C = textscan(S.snsShankMap, '(%d:%d:%d:%d', ...
         'EndOfLine', ')', 'HeaderLines', 1 );
     S.shanks = double(cell2mat(C(1)));
-    size(S.shanks)
-    S.shanks
+
   
 
     %number of bits of ADC [was 16 in Chongxi original]

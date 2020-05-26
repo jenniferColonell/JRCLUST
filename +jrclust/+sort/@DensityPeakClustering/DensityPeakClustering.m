@@ -43,11 +43,11 @@ classdef DensityPeakClustering < jrclust.interfaces.Clustering
     end
 
     %% QUALITY METRICS
-    properties (SetObservable)
-        nSitesOverThresh;   % number of sites exceeding the detection threshold, per cluster
-        siteRMS;            % site-wise threshold/qqFactor
-        unitSNR;            % signal-to-noise ratio at peak site (peak/RMS)
-    end
+%     properties (SetObservable)
+%         nSitesOverThresh;   % number of sites exceeding the detection threshold, per cluster
+%         siteRMS;            % site-wise threshold/qqFactor
+%         unitSNR;            % signal-to-noise ratio at peak site (peak/RMS)
+%     end
 
     %% SORTING RESULTS (IMMUTABLE)
     properties (Dependent, Transient)
@@ -60,8 +60,8 @@ classdef DensityPeakClustering < jrclust.interfaces.Clustering
 
     %% DETECTION RESULTS (IMMUTABLE)
     properties (Dependent, Transient)
-        meanSiteThresh;     % mean sitewise detection threshold over all chunks
-        siteThresh;         % sitewise detection threshold over all chunks
+%         meanSiteThresh;     % mean sitewise detection threshold over all chunks
+%         siteThresh;         % sitewise detection threshold over all chunks
         spikesBySite2;      % aggregate of secondary spike indices by site
         spikesBySite3;      % aggregate of tertiary spike indices by site
         spikeSites2;        % secondary sites on which spikes occur
@@ -176,18 +176,6 @@ classdef DensityPeakClustering < jrclust.interfaces.Clustering
             ms = obj.unitPeakSites;
         end
 
-        % meanSiteThresh
-        function st = get.meanSiteThresh(obj)
-            if isfield(obj.dRes, 'meanSiteThresh')
-                st = obj.dRes.meanSiteThresh;
-            else
-                st = [];
-            end
-        end
-        function set.meanSiteThresh(obj, val)
-            obj.dRes.meanSiteThresh = val;
-        end
-
         % nClusters/nClu
         function nc = get.nClu(obj)
             nc = obj.nClusters;
@@ -228,20 +216,6 @@ classdef DensityPeakClustering < jrclust.interfaces.Clustering
         % nSitesOverThresh/vnSite_clu
         function so = get.vnSite_clu(obj)
             so = obj.nSitesOverThresh;
-        end
-
-        % siteThresh
-        function st = get.siteThresh(obj)
-            if isfield(obj.dRes, 'meanSiteThresh') && ~isempty(obj.dRes.meanSiteThresh)
-                st = obj.dRes.meanSiteThresh;
-            elseif isfield(obj.dRes, 'siteThresh') % backwards compatibility
-                st = obj.dRes.siteThresh;
-            else
-                st = [];
-            end
-        end
-        function set.siteThresh(obj, val)
-            obj.dRes.siteThresh = val;
         end
 
         % spikeClusters/viClu

@@ -16,8 +16,11 @@ function hFigTime = plotFigTime(hFigTime, hClust, hCfg, selected, maxAmp, iSite,
                 trialTimes = trialTimes{1};
             end
         end
+        
         if ~isempty(trialTimes)
-            hFigTime.addPlot('trialTimes',@line,repmat(trialTimes,1,2),[0 abs(maxAmp)],'linewidth',0.1,'color',[0.5 0.7 0.5]);
+            if 	hCfg.plotTrialTime
+                hFigTime.addPlot('trialTimes',@line,repmat(trialTimes,1,2),[0 abs(maxAmp)],'linewidth',0.1,'color',[0.5 0.7 0.5]);
+            end
         elseif ~isempty(hCfg.trialFile)
            warning('Could not load trial times from %s.',hCfg.trialFile);
         end        

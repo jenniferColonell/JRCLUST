@@ -18,6 +18,12 @@ function validateParams(obj)
         obj.error('siteMap refers to channels larger than indexed by nChans', 'Bad probe configuration');
         return;
     end
+    
+    % make sure shankMap to a column vector 
+    [r, c] = size(obj.shankMap);
+    if r == 1
+        obj.shankMap = obj.shankMap';
+    end
 
     % nSiteDir and/or nSitesExcl may not have been specified
     if isempty(obj.nSiteDir) || isempty(obj.nSitesExcl)
