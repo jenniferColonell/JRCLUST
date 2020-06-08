@@ -24,12 +24,19 @@ function hFigCorr = plotFigCorr(hFigCorr, hClust, hCfg, selected)
     jitterSamp = round(jitterMs*hCfg.sampleRate/1000); % 0.5 ms
     nLags = round(nLagsMs/jitterMs);
 
-    iTimes = int32(double(hClust.spikeTimes(hClust.spikesByCluster{iCluster}))/jitterSamp);
+    % int32 rounds fractions to the nearest integer; at *.5, rounds to
+    % nearest even integer. This calculation rounds each time to the
+    % nearest bin value (0.5 msec)
+    %iTimes = int32(double(hClust.spikeTimes(hClust.spikesByCluster{iCluster}))/jitterSamp);
+    iTimes = floor(double(hClust.spikeTimes(hClust.spikesByCluster{iCluster}))/jitterSamp);
 
     if iCluster ~= jCluster
+        % for cross correlations build and array that includes bins +/- one
+        % from the real times
         iTimes = [iTimes, iTimes - 1, iTimes + 1]; % check for off-by-one
     end
-    jTimes = int32(double(hClust.spikeTimes(hClust.spikesByCluster{jCluster}))/jitterSamp);
+    %jTimes = int32(double(hClust.spikeTimes(hClust.spikesByCluster{jCluster}))/jitterSamp);
+    jTimes = floor(double(hClust.spikeTimes(hClust.spikesByCluster{jCluster}))/jitterSamp);
 
     % count agreements of jTimes + lag with iTimes
     lagSamp = -nLags:nLags;
@@ -42,7 +49,12 @@ function hFigCorr = plotFigCorr(hFigCorr, hClust, hCfg, selected)
     end
 
     lagTime = lagSamp*jitterMs;
-
+    
+    yRange = [0.1, max(intCount)];
+    if yRange(2) == 0
+        yRange(2) = 1;
+    end
+    
     % draw the plot
     if ~hFigCorr.hasAxes('default')
         hFigCorr.addAxes('default');
@@ -50,9 +62,9 @@ function hFigCorr = plotFigCorr(hFigCorr, hClust, hCfg, selected)
         hFigCorr.axApply('default', @xlabel, 'Time (ms)');
         hFigCorr.axApply('default', @ylabel, 'Counts');
         hFigCorr.axApply('default', @grid, 'on');
-        hFigCorr.axApply('default', @set, 'YScale', 'log');
+        hFigCorr.axApply('default', @set, 'YScale', 'log');      
     else
-        hFigCorr.updatePlot('hBar', lagTime, intCount);
+        hFigCorr.updatePlot('hBar', lagTime, intCount);       
     end
 
     if iCluster ~= jCluster
@@ -61,4 +73,5 @@ function hFigCorr = plotFigCorr(hFigCorr, hClust, hCfg, selected)
         hFigCorr.axApply('default', @title, sprintf('Unit %d', iCluster));
     end
     hFigCorr.axApply('default', @set, 'XLim', jitterMs*[-nLags, nLags]);
+    hFigCorr.axApply('default', @set, 'YLim', yRange);
 end
