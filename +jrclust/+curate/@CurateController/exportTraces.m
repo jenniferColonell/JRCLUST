@@ -5,7 +5,7 @@ function exportTraces(obj)
     iCluster = obj.selected(1);
     clusterSpikes = obj.hClust.spikesByCluster{iCluster};
     nSpikes = numel(clusterSpikes);
-
+    
     shapeFilt = [size(spikesFilt, 1), obj.hCfg.nSites, nSpikes];
     shapeRaw = [size(spikesRaw, 1), obj.hCfg.nSites, nSpikes];
 
@@ -14,8 +14,9 @@ function exportTraces(obj)
     spikeNeighbors = obj.hCfg.siteNeighbors(:, obj.hClust.spikeSites);
 
     for jSpike = 1:nSpikes
-        iSpikesFilt(:, spikeNeighbors(:, jSpike), jSpike) = spikesFilt(:, :, clusterSpikes(jSpike));
-        iSpikesRaw(:, spikeNeighbors(:, jSpike), jSpike) = spikesRaw(:, :, clusterSpikes(jSpike));
+        currNeighbors = spikeNeighbors(:, clusterSpikes(jSpike))
+        iSpikesFilt(:, currNeighbors, jSpike) = spikesFilt(:, :, clusterSpikes(jSpike));
+        iSpikesRaw(:, currNeighbors, jSpike) = spikesRaw(:, :, clusterSpikes(jSpike));
     end
 
     jrclust.utils.exportToWorkspace(struct(sprintf('spikesFilt%d', iCluster), iSpikesFilt, ...
