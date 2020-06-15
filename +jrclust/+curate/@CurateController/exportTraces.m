@@ -14,7 +14,7 @@ function exportTraces(obj)
     spikeNeighbors = obj.hCfg.siteNeighbors(:, obj.hClust.spikeSites);
 
     for jSpike = 1:nSpikes
-        currNeighbors = spikeNeighbors(:, clusterSpikes(jSpike))
+        currNeighbors = spikeNeighbors(:, clusterSpikes(jSpike));
         iSpikesFilt(:, currNeighbors, jSpike) = spikesFilt(:, :, clusterSpikes(jSpike));
         iSpikesRaw(:, currNeighbors, jSpike) = spikesRaw(:, :, clusterSpikes(jSpike));
     end

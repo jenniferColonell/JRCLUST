@@ -265,7 +265,8 @@ function updateSplitPlots(hFigSplit)
     end
 
     hFigSplit.axApply('vppTime', @legend, legends, 'Location', 'Best');
-    hFigSplit.axApply('vppTime', @set, 'YDir', 'Reverse');
+    %hFigSplit.axApply('vppTime', @set, 'YDir', 'Reverse');
+    hFigSplit.axApply('vppTime', @set, 'YDir');
     hFigSplit.axApply('vppTime', @view, 0, 90);
     hFigSplit.axApply('vppTime', @xlim, [min(clusterTimes) max(clusterTimes)]);
     hFigSplit.axApply('vppTime', @ylim, [min(localVpp) max(localVpp)]);
