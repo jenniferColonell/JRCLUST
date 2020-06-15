@@ -43,6 +43,13 @@ function computeQualityScores(obj, updateMe)
         
         % define ISI ratio as #(ISI <= 2ms)/#(ISI <= 20ms)
         unitISIRatio_(iCluster) = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
+        
+        % Fraction of False postive events (fp)
+%         expTime = single(max(obj.spikeTimes))*obj.hCfg.sampleRate;
+%         refPeriod = 0.0015;       
+%         nSamples1p5ms = round(obj.hCfg.sampleRate * refPeriod);
+%         nViolation = sum(diffCtimes <= nSamples1p5ms);
+%         unitFP_(iCluster) = (nViolation * expTime)/(2* refPeriod * clusterSpikes_ * clusterSpikes_);
 
         % Compute L-ratio and isolation distance (use neighboring features)
         iSite = obj.clusterSites(iCluster);
@@ -93,6 +100,7 @@ function computeQualityScores(obj, updateMe)
     warning on;
 
     obj.unitISIRatio = unitISIRatio_;
+    %obj.unitFP = unitFP_;
     obj.unitIsoDist = unitIsoDist_;
     obj.unitLRatio = unitLRatio_;
     obj.unitPeaksRaw = unitPeaksRaw_; % unitPeaks is set elsewhere

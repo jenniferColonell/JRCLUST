@@ -18,6 +18,7 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
     IsoDist = obj.unitIsoDist(:);
     LRatio = obj.unitLRatio(:);
     ISIRatio = obj.unitISIRatio(:);
+    %FP = obj.unitFP(:);
     note = obj.clusterNotes(:);
 
     filename = jrclust.utils.subsExt(obj.hCfg.configFile, '_quality.csv');
@@ -45,7 +46,8 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
                     sprintf('\tColumn 9: IsoDist: Isolation distance quality metric'), ...
                     sprintf('\tColumn 10: LRatio: L-ratio quality metric'), ...
                     sprintf('\tColumn 11: ISIRatio: ISI-ratio quality metric'), ...
-                    sprintf('\tColumn 12: note: user comments')};
+                    sprintf('\tColumn 12: FP: rate of false positives estimated from ISI violations'), ...
+                    sprintf('\tColumn 13: note: user comments')};
 
         cellfun(@(x) fprintf('%s\n', x), helpText);
         if fGui
