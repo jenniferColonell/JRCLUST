@@ -18,6 +18,26 @@
                 "[R] Reset scale",
                 "[S] Split unit"
     ],
+    "FigQS": [  "[H] Display this help",
+                "[M] Merge selected units",
+                "[S] Split unit"
+    ],
+    "FigISI": [ "[H] Display this help",
+                "[M] Merge selected units",
+                "[S] Split unit"
+    ],
+    "FigHist": [ "[H] Display this help",
+                "[M] Merge selected units",
+                "[S] Split unit"
+    ],
+    "FigCorr": [ "[H] Display this help",
+                "[M] Merge selected units",
+                "[S] Split unit"
+    ],
+    "FigPos": [ "[H] Display this help",
+                "[M] Merge selected units",
+                "[S] Split unit"
+    ],
     "FigSim": ["[Shift-click or wheel click, drag] Pan",
                "[Mouse wheel] Zoom in/out",
                "[X + Wheel] X-zoom select",
