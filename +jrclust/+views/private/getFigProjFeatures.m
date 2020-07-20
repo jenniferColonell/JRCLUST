@@ -10,14 +10,19 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
     if strcmp(dispFeature, 'template') && ~isa(hClust, 'jrclust.sort.TemplateClustering')
         dispFeature = 'vpp';
     end
-
+    
+    
     iCluster = selected(1);
+
     if numel(selected) == 2
         jCluster = selected(2);
+%         ijDistSq = ( (hClust.clusterCentroids(iCluster,1) - hClust.clusterCentroids(jCluster,1))^2 ...
+%                    + (hClust.clusterCentroids(iCluster,2) - hClust.clusterCentroids(jCluster,2))^2 )
     else
         jCluster = [];
     end
 
+    
     siteMask = ismember(hClust.spikeSites, sitesToShow);
     % if we're only interested in a subset of time, just plot those spikes
     if ~isempty(hCfg.projTimeLimits)
@@ -30,9 +35,12 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
     % spikes occurring on these sites and within these times and NOT in iCluster
     bgMask = (hClust.spikeClusters ~= iCluster) & siteMask & timeMask;
 
-    if ~isempty(jCluster)
+    if ~isempty(jCluster) 
         % spikes occurring on these sites and within these times and in jCluster
-        jMask = (hClust.spikeClusters == jCluster) & siteMask & timeMask;
+        % jMask = (hClust.spikeClusters == jCluster) & siteMask & timeMask;
+        % No spatial mask -- show spikes in jCluster with any overlap 
+        % with sitesToShow for iCluster
+        jMask = (hClust.spikeClusters == jCluster) & timeMask;
 
         % update bgMask to exclude spikes from jCluster
         bgMask = bgMask & (~jMask);
@@ -112,7 +120,7 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
                                                sitesToShow, 0, 1); % use voltages
             fgYData = abs(permute(min(fgWindows), [2, 3, 1])); % nSitesToShow x nSpikes
             fgXData = abs(permute(max(fgWindows), [2, 3, 1]));
-
+            
             if ~isempty(jCluster)
                 fgWindows2 = hClust.getSpikeWindows(fg2Spikes, sitesToShow, 0, 1); % use voltages
                 fg2YData = abs(permute(min(fgWindows2), [2, 3, 1]));

@@ -71,7 +71,7 @@ function hFigProj = plotFigProj(hFigProj, hClust, sitesToShow, selected, boundSc
 
     % plot foreground spikes
     plotFeatures(hFigProj, 'foreground', fgYData, fgXData, boundScale, hCfg);
-
+    
     % plot secondary foreground spikes
     if numel(selected) == 2
         plotFeatures(hFigProj, 'foreground2', fg2YData, fg2XData, boundScale, hCfg);
