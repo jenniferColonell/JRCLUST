@@ -10,6 +10,7 @@
         "unitVpp",
         "unitVppRaw",
         "unitISIRatio",
+        "unitISIViolations",
         "unitIsoDist",
         "unitLRatio",
         "unitSNR",
