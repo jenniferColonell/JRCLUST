@@ -74,7 +74,7 @@ function plotPosUnit(hFigPos, cData, hCfg, fSecondary, maxAmp)
         else
             YData = sampleWf(:,:,iWav) / maxAmp;
             lineWidth = 0.5;
-            cmap = 0.5*[1, 1, 1];
+            cmap = hCfg.colorMap(1, :);  %use color for background 
         end
 
         YData = bsxfun(@plus, YData, siteYData');

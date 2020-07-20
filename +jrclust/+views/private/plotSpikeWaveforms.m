@@ -40,7 +40,7 @@ function hFigWav = plotSpikeWaveforms(hFigWav, hClust, maxAmp, channel_idx)
     if hFigWav.hasPlot('hSpkAll')
         hFigWav.updatePlot('hSpkAll', jrclust.utils.neCell2mat(XData), jrclust.utils.neCell2mat(YData), userData);
     else
-        hFigWav.addPlot('hSpkAll', jrclust.utils.neCell2mat(XData), jrclust.utils.neCell2mat(YData), 'Color', [.5 .5 .5], 'LineWidth', .5, 'UserData', userData);
+        hFigWav.addPlot('hSpkAll', jrclust.utils.neCell2mat(XData), jrclust.utils.neCell2mat(YData), 'Color', [0.5,0.5,0.5], 'LineWidth', .5, 'UserData', userData);
     end
 end
 
