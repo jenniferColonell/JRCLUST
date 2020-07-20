@@ -703,9 +703,9 @@
             "section": ["usage"]
         },
         "colorMap": {
-            "description": "RGB color map for background, primary selected, and secondary selected spikes",
+            "description": "RGB color map for background, primary selected, secondary selected spikes, and sampled spikes",
             "comment": "The first three values are the R values, the next three are the G values, and the last three are the B values.",
-            "default_value": [0.5, 0, 1, 0.5, 0, 0, 0.5, 0, 0],
+            "default_value": [0.5, 0.5, 0.5, 0, 0, 0, 1, 0, 0],
             "validation": {
                 "classes": ["numeric"],
                 "attributes": [
@@ -890,7 +890,8 @@
                 "FigRD",
                 "FigSim",
                 "FigTime",
-                "FigWav"
+                "FigWav",
+                "FigQS"
             ],
             "validation": {
                 "classes": ["cell"],
@@ -907,7 +908,8 @@
                     "FigRD",
                     "FigSim",
                     "FigTime",
-                    "FigWav"
+                    "FigWav",
+                    "FigQS"
                 ]
             },
             "section": [
@@ -924,6 +926,19 @@
                 "classes": ["cell","numeric"],
                 "postassert": "@(x) all(cellfun(@(y) numel(y) == 4, x))",
                 "attributes": ["nonempty" ]
+            },
+            "section": [
+                "curation",
+                "display"
+            ]
+        },
+        "annotFunc": {
+            "description": "Name of function to suggest annotations",
+            "comment": "Name of a function on the MATLAB path to suggest annotation base don quality scores",
+            "default_value": "None",
+            "validation": { 
+                "classes": ["char"],
+                "attributes": ["scalartext"]
             },
             "section": [
                 "curation",
