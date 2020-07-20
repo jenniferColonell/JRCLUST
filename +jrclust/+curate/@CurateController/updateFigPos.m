@@ -6,6 +6,6 @@ function updateFigPos(obj)
 
     hFigPos = obj.hFigs('FigPos');
     jrclust.views.plotFigPos(hFigPos, obj.hClust, obj.hCfg, obj.selected, obj.maxAmp);
-    hFigPos.hFunKey = @(hO, hE) []; % do-nothing function
+    %hFigPos.hFunKey = @(hO, hE) []; % do-nothing function
     hFigPos.setMouseable();
 end

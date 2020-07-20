@@ -30,6 +30,41 @@ function plotAllFigures(obj)
         hFigTime = obj.hFigs('FigTime');
         hFigTime.hFunKey = @obj.keyPressFigTime;
     end
+    
+    % ISI histogram response to keypresses
+    if obj.hasFig('FigQS')
+        % set key and mouse handles
+        hFigQS = obj.hFigs('FigQS');
+        hFigQS.hFunKey = @obj.keyPressFigQS;
+    end
+    
+    % Return map response to keypresses
+    if obj.hasFig('FigISI')
+        % set key and mouse handles
+        hFigISI = obj.hFigs('FigISI');
+        hFigISI.hFunKey = @obj.keyPressFigISI;
+    end
+    
+    % ISI histogram response to keypresses
+    if obj.hasFig('FigHist')
+        % set key and mouse handles
+        hFigHist = obj.hFigs('FigHist');
+        hFigHist.hFunKey = @obj.keyPressFigHist;
+    end
+    
+    % Correlogram response to keypresses
+    if obj.hasFig('FigCorr')
+        % set key and mouse handles
+        hFigHist = obj.hFigs('FigCorr');
+        hFigHist.hFunKey = @obj.keyPressFigCorr;
+    end
+    
+    % FigPos response to keypresses
+    if obj.hasFig('FigPos')
+        % set key and mouse handles
+        hFigHist = obj.hFigs('FigPos');
+        hFigHist.hFunKey = @obj.keyPressFigPos;
+    end
 
     % plot main waveform view
     if obj.hasFig('FigWav')

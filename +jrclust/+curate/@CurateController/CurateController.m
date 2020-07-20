@@ -72,6 +72,11 @@ classdef CurateController < handle
         keyPressFigProj(obj, hObject, hEvent);
         keyPressFigTime(obj, hObject, hEvent);
         keyPressFigWav(obj, hObject, hEvent);
+        keyPressFigQS(obj, hObject, hEvent);
+        keyPressFigISI(obj, hObject, hEvent);
+        keyPressFigHist(obj, hObject, hEvent);
+        keyPressFigCorr(obj, hObject, hEvent);
+        keyPressFigPos(obj, hObject, hEvent);
         mouseClickFigSim(obj, xyPos, clickType);
         mouseClickFigWav(obj, xyPos, clickType);
     end
@@ -90,6 +95,7 @@ classdef CurateController < handle
         updateFigTime(obj, doAutoscale);
         updateFigPSTH(obj, doCreate);
         updateFigWav(obj);
+        updateFigQS(obj);
     end
 
     %% UTILITY METHODS
