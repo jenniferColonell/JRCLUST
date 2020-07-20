@@ -55,7 +55,7 @@ function [hFigTrial1, hFigTrial2] = doPlotFigPSTH(hClust, hFigTrial1, hFigTrial2
     axLen = 1/nStims;
 
     if ~jrclust.utils.isvalid(hFigTrial1) || ~hFigTrial1.isReady
-        hFigTrial1 = jrclust.views.Figure('FigTrial1', [.5  .5 .5 .5], hCfg.trialFile, 0, 0);
+        hFigTrial1 = jrclust.views.Figure('FigTrial1', [.45  .7 .35 .3], hCfg.trialFile, 0, 0);
         for iStim = 1:nStims
             iOffset = axOffset + (iStim-1) * axLen;
             hFigTrial1.addAxes(sprintf('stim%d1', iStim), 'Position', [axOffset iOffset .9 axLen*.68]);
@@ -67,7 +67,7 @@ function [hFigTrial1, hFigTrial2] = doPlotFigPSTH(hClust, hFigTrial1, hFigTrial2
     plot_figure_psth_(hFigTrial1, selected(1), trialTimes, hClust, hCfg);
 
     if ~jrclust.utils.isvalid(hFigTrial2) || ~hFigTrial2.isReady
-        hFigTrial2 = jrclust.views.Figure('FigTrial2', [.5  0 .5 .5], hCfg.trialFile, 0, 0);
+        hFigTrial2 = jrclust.views.Figure('FigTrial2', [.45  0.4 .35 .3], hCfg.trialFile, 0, 0);
         hFigTrial2.figApply(@set, 'Visible', 'off');
         for iStim = 1:nStims
             iOffset = axOffset + (iStim-1) * axLen;
