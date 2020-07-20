@@ -26,7 +26,9 @@ function spawnFigures(obj)
             case 'FigISI'
                 figTitle = 'Return map';                
             case 'FigCorr'
-                figTitle = 'Time correlation';                
+                figTitle = 'Time correlation';   
+            case 'FigQS'
+                figTitle = 'Quality Scores';                
             case 'FigRD'
                 if isa(obj.hClust,'jrclust.sort.TemplateClustering')
                     warning('Skipping spawning of rho-delta plot because density-peak clustering was not used.');

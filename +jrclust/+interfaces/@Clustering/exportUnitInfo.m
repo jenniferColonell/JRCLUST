@@ -41,14 +41,17 @@ function uInfo = exportUnitInfo(obj, iCluster)
     if ~isempty(obj.unitISIRatio)
         uInfo.ISIRatio = obj.unitISIRatio(iCluster);
     end
+    if ~isempty(obj.unitISIViolations)
+        uInfo.ISIViolations = obj.unitISIViolations(iCluster);
+    end
     if ~isempty(obj.unitIsoDist)
         uInfo.IsoDist = obj.unitIsoDist(iCluster);
     end
     if ~isempty(obj.unitPeaksRaw)
         uInfo.peaksRaw = obj.unitPeaksRaw(iCluster);
     end
-    if ~isempty(obj.unitVppRaw)
-        uInfo.vpp = obj.unitVppRaw(iCluster);
+    if ~isempty(obj.unitVpp)
+        uInfo.vpp = obj.unitVpp(iCluster);
     end
     
     if ~isempty(obj.unitSNR)

@@ -27,6 +27,7 @@ function computeQualityScores(obj, updateMe)
         unitIsoDist_ = obj.unitIsoDist;
         unitLRatio_ = obj.unitLRatio;
         unitISIRatio_ = obj.unitISIRatio;
+        unitISIViolations_ = obj.unitISIViolations;
         updateMe = updateMe(:)';
     end
 
@@ -43,6 +44,7 @@ function computeQualityScores(obj, updateMe)
         
         % define ISI ratio as #(ISI <= 2ms)/#(ISI <= 20ms)
         unitISIRatio_(iCluster) = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
+        unitISIViolations_(iCluster) = sum(diffCtimes < nSamples2ms);
         
         % Fraction of False postive events (fp)
 %         expTime = single(max(obj.spikeTimes))*obj.hCfg.sampleRate;
@@ -100,6 +102,7 @@ function computeQualityScores(obj, updateMe)
     warning on;
 
     obj.unitISIRatio = unitISIRatio_;
+    obj.unitISIViolations = unitISIViolations_;
     %obj.unitFP = unitFP_;
     obj.unitIsoDist = unitIsoDist_;
     obj.unitLRatio = unitLRatio_;

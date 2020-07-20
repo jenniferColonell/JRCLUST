@@ -52,6 +52,7 @@ function updateSelect(obj, iClusters, force)
     obj.updateFigProj(1);
     obj.updateFigTime(1);
     obj.updateFigPSTH(0);
+    obj.updateFigQS();
 
     % update cursors
     obj.updateCursorFigWav();

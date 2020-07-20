@@ -10,7 +10,7 @@ function inconsistencies = inconsistentFields(obj)
             inconsistencies{end+1} = vectorFields{i}; %#ok<AGROW>
         end
     end
-
+    
     % see JRCLUST/json/Clustering.json for consistency functions for
     % non-vector fields
     otherFields = obj.unitFields.otherFields;

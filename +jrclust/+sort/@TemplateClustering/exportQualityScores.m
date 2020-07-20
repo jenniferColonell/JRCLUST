@@ -22,11 +22,13 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
     IsoDist = obj.unitIsoDist(:);
     LRatio = obj.unitLRatio(:);
     ISIRatio = obj.unitISIRatio(:);
+    ISIViolations = obj.unitISIViolations;
     %FP = obj.unitFP(:);
     note = obj.clusterNotes(:);
 
     filename = jrclust.utils.subsExt(obj.hCfg.configFile, '_quality.csv');
-
+    
+    obj.unitFields.vectorFields
     try
         if snrPresent
             table_ = table(ID, SNR, centerSite, nSpikes, xPos, yPos, uVmin, uVpp, IsoDist, LRatio, ISIRatio, note);
@@ -82,3 +84,4 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
 
     success = 1;
 end
+
