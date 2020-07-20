@@ -100,7 +100,8 @@ function loadFiles(obj)
                     hClust.(fn) = res_.(fn);
                 end
             end
-
+            
+            
             res_.hClust = hClust;
         elseif isfield(res_, 'spikeClusters')
             hClust = jrclust.sort.DensityPeakClustering(obj.hCfg);
@@ -156,6 +157,11 @@ function loadFiles(obj)
     end
 
     obj.res = res_;
+    
+    % If new quality scores have been added, the new fields are present but
+    % empty in obj.res. Fill them in by recomputing quality scores now
+    obj.hClust.computeQualityScores([]);
+    
 end
 
 %% LOCAL FUNCTIONS
