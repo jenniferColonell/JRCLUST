@@ -45,8 +45,8 @@ function S = loadMetadata(metafile)
             probeType = '3A';
             S.probeOpt = S.imProbeOpt;
         elseif isfield(S,'imDatPrb_type')
-            if S.imDatPrb_type == 0
-                probeType = '3B'; 
+            if S.imDatPrb_type == 0 || S.imDatPrb_type == 1100 
+                probeType = 'NP1'; 
             elseif S.imDatPrb_type == 21 || S.imDatPrb_type == 24                
                 probeType = 'NP2';
             else
@@ -56,8 +56,8 @@ function S = loadMetadata(metafile)
             probeType = 'unknown';
         end
         
-        if strcmp(probeType,'3A') || strcmp(probeType, '3B')
-            % 3A or 3B data; both have 10 bit adc, gain specified in imro
+        if strcmp(probeType,'3A') || strcmp(probeType, 'NP1')
+            % NP1-like or 3B data; both have 10 bit adc, gain specified in imro
             S.adcBits = 10; % 10 bit adc but 16 bit saved
             % read data from ~imroTbl
             imroTbl = strsplit(S.imroTbl(2:end-1), ')(');
