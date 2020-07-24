@@ -66,6 +66,7 @@ classdef (Abstract) Clustering < handle
         nSitesOverThresh;   % number of sites exceeding the detection threshold, per cluster
         siteRMS;            % site-wise threshold/qqFactor
         unitSNR;            % signal-to-noise ratio at peak site (peak/RMS)
+        unitFiringStd;      % std deviation of firing rate/mean firing rate
     end
 
     %% SORTING RESULTS (IMMUTABLE)

@@ -2,6 +2,8 @@ function plotFigQS(hFigQS, hClust, hCfg, selected, maxAmp)
     %PLOTFIGQS Simple table of quality scores + recommended annotation
     c1Data = hClust.exportUnitInfo(selected(1));
     nSpikes = hClust.unitCount(c1Data.cluster);
+    c1Data.times = hClust.spikeTimes(hClust.spikeClusters == c1Data.cluster);
+      
     if isfield(c1Data,'SNR')
         bSNR = true;
     else
@@ -12,16 +14,16 @@ function plotFigQS(hFigQS, hClust, hCfg, selected, maxAmp)
         c2Data = hClust.exportUnitInfo(selected(2));
     end
 
-    c1Col = qualityScoreStrings (c1Data, nSpikes, hCfg, bSNR);
+    c1Col = qualityScoreStrings (c1Data, nSpikes, hClust, hCfg, bSNR);
     
     unitStr = sprintf('Unit %d', c1Data.cluster);
     
     tbl = uitable(hFigQS.hFig);
     
     if bSNR
-        tbl.RowName = {'num Spikes', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'IsoDist'};
+        tbl.RowName = {'num Spikes', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
     else
-        tbl.RowName = {'num Spikes', 'Vpp', '%ISI', 'ISI Viol', 'IsoDist'};
+        tbl.RowName = {'num Spikes', 'Vpp', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
     end
     
     if hCfg.annotFunc ~= "None"
@@ -30,20 +32,23 @@ function plotFigQS(hFigQS, hClust, hCfg, selected, maxAmp)
     
     tbl.FontSize = 14;
     tbl.Units = 'normalized';
-    tbl.Position = [0.05,0.15,0.8,0.8];
+    tbl.Position = [0.05,0.10,0.90,0.90];
 
     
     if numel(selected) == 1
         % add if block to test for SNR field
         tbl.ColumnName = {unitStr};
+        tbl.ColumnWidth = {95};
         tbl.Data = c1Col;
     else
         
         nSpikes2 = hClust.unitCount(c2Data.cluster);
         unitStr2 = sprintf('Unit %d', c2Data.cluster);
-        c2Col = qualityScoreStrings (c2Data, nSpikes2, hCfg, bSNR); 
+        c2Data.times = hClust.spikeTimes(hClust.spikeClusters == c2Data.cluster);
+        c2Col = qualityScoreStrings (c2Data, nSpikes2, hClust, hCfg, bSNR); 
         mergeCol = mergeQS(hClust, hCfg, selected, bSNR);
         tbl.ColumnName = {unitStr, unitStr2, 'merged'};
+        tbl.ColumnWidth = {95,95,95};
         tbl.Data = [c1Col, c2Col, mergeCol];
 
     end
@@ -52,8 +57,10 @@ end
 
 %% LOCAL FUNCTIONS
 
-function colData = qualityScoreStrings (cData, nSpikes, hCfg, bSNR)
+function colData = qualityScoreStrings (cData, nSpikes, hClust, hCfg, bSNR)
     % build a column of quality score data for the table
+    % includes calculating a few extra quantities that are useful for
+    % autoCall function
     
     % first three rows, which may or may not include SNR        
     if bSNR
@@ -66,12 +73,16 @@ function colData = qualityScoreStrings (cData, nSpikes, hCfg, bSNR)
     % rest of the rows:
     rows = {sprintf('%.2f', cData.ISIRatio*100); ...
            sprintf('%d', cData.ISIViolations); ...
-           sprintf('%.1f', cData.IsoDist)};
+           sprintf('%.1f', cData.IsoDist); ...
+           sprintf('%.2f', cData.firingStd)};
+        
     colData = [colData; rows];
     
     if hCfg.annotFunc ~= "None"
-        autoCall = feval( hCfg.annotFunc, nSpikes, cData.vpp, cData.SNR, ...
-                cData.ISIRatio, cData.ISIViolations, cData.IsoDist );
+        expTime = single(max(hClust.spikeTimes))/hCfg.sampleRate;
+        firingRate = single(nSpikes)/expTime;       
+        autoCall = feval( hCfg.annotFunc, firingRate, cData.vpp, cData.SNR, ...
+                cData.ISIRatio, cData.ISIViolations, cData.IsoDist, cData.firingStd );
         callCell = {sprintf('%s', autoCall)};
         colData = [colData; callCell];
     end
@@ -120,16 +131,18 @@ function mergeCol = mergeQS( hClust, hCfg, selected, bSNR)
     mergedSpikes = [hClust.spikesByCluster{c1}; hClust.spikesByCluster{c2}];
     
     % ISIviolations    
-    mergedTimes = sort(hClust.spikeTimes(mergedSpikes));
-    diffCtimes = diff(mergedTimes);
+    mData.times = sort(hClust.spikeTimes(mergedSpikes)); 
+    diffCtimes = diff(mData.times);
     
     nSamples2ms = round(hCfg.sampleRate * .002);
     nSamples20ms = round(hCfg.sampleRate * .02);
     
     mData.ISIRatio = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
-    mData.ISIViolations = sum(diffCtimes < nSamples2ms);
+    mData.ISIViolations = sum(diffCtimes <= nSamples2ms);
     
-
+    % Histogram spike times into 100 bins (arbitrary)
+    timeHist = histcounts(mData.times, 100);  %Fixed 100 bins
+    mData.firingStd = std(timeHist)/mean(timeHist);
     
     % Iso distance
     mSite1Spikes = hClust.spikesBySite{mSite};      %all spikes on main site of this cluster
@@ -178,7 +191,7 @@ function mergeCol = mergeQS( hClust, hCfg, selected, bSNR)
     warning on;
 
     
-    mergeCol = qualityScoreStrings(mData, nSpikesM, hCfg, bSNR);
+    mergeCol = qualityScoreStrings(mData, nSpikesM, hClust, hCfg, bSNR);
     
     
 

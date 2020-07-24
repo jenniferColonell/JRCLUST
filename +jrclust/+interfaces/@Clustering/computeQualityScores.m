@@ -28,6 +28,7 @@ function computeQualityScores(obj, updateMe)
         unitLRatio_ = obj.unitLRatio;
         unitISIRatio_ = obj.unitISIRatio;
         unitISIViolations_ = obj.unitISIViolations;
+        unitFiringStd_ = obj.unitFiringStd;
         updateMe = updateMe(:)';
     end
 
@@ -44,10 +45,14 @@ function computeQualityScores(obj, updateMe)
         
         % define ISI ratio as #(ISI <= 2ms)/#(ISI <= 20ms)
         unitISIRatio_(iCluster) = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
-        unitISIViolations_(iCluster) = sum(diffCtimes < nSamples2ms);
+        unitISIViolations_(iCluster) = sum(diffCtimes <= nSamples2ms);
+        
+        % Histogram spike times into 100 bins (arbitrary)
+        timeHist = histcounts(clusterTimes_, 100);  %Fixed 100 bins
+        unitFiringStd_(iCluster) = std(timeHist)/mean(timeHist);
         
         % Fraction of False postive events (fp)
-%         expTime = single(max(obj.spikeTimes))*obj.hCfg.sampleRate;
+%         expTime = single(max(obj.spikeTimes))/obj.hCfg.sampleRate;
 %         refPeriod = 0.0015;       
 %         nSamples1p5ms = round(obj.hCfg.sampleRate * refPeriod);
 %         nViolation = sum(diffCtimes <= nSamples1p5ms);
@@ -125,6 +130,7 @@ function computeQualityScores(obj, updateMe)
     obj.unitSNR = unitSNR_;
     obj.nSitesOverThresh = nSitesOverThresh_;
     obj.siteRMS = siteRMS_;
+    obj.unitFiringStd = unitFiringStd_;
 
     obj.hCfg.updateLog('qualScores', 'Finished computing cluster quality scores', 0, 1);
 end

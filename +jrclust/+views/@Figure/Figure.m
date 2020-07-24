@@ -39,8 +39,9 @@ classdef Figure < handle
     methods
         function obj = Figure(figTag, figPos, figName, figToolbar, figMenubar)
             %FIGURE Construct an instance of this class
-            obj.hFig = figure();
 
+            obj.hFig = figure();
+        
             obj.figTag = figTag;
 
             obj.figPos = figPos;

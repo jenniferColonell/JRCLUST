@@ -14,6 +14,7 @@
         "unitIsoDist",
         "unitLRatio",
         "unitSNR",
+        "unitFiringStd",
         "nSitesOverThresh"
     ],
     "other fields": {

@@ -57,4 +57,8 @@ function uInfo = exportUnitInfo(obj, iCluster)
     if ~isempty(obj.unitSNR)
         uInfo.SNR = obj.unitSNR(iCluster);
     end
+    
+    if ~isempty(obj.unitFiringStd)
+        uInfo.firingStd = obj.unitFiringStd(iCluster);
+    end
 end
