@@ -21,9 +21,9 @@ function plotFigQS(hFigQS, hClust, hCfg, selected, maxAmp)
     tbl = uitable(hFigQS.hFig);
     
     if bSNR
-        tbl.RowName = {'num Spikes', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
     else
-        tbl.RowName = {'num Spikes', 'Vpp', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
     end
     
     if hCfg.annotFunc ~= "None"
@@ -62,9 +62,12 @@ function colData = qualityScoreStrings (cData, nSpikes, hClust, hCfg, bSNR)
     % includes calculating a few extra quantities that are useful for
     % autoCall function
     
+    expTime = single(max(hClust.spikeTimes))/hCfg.sampleRate;
+    firingRate = single(nSpikes)/expTime; 
+    
     % first three rows, which may or may not include SNR        
     if bSNR
-       colData = {sprintf('%d',nSpikes); sprintf('%.1f', cData.vpp); ...
+       colData = {sprintf('%.2f',firingRate); sprintf('%.1f', cData.vpp); ...
            sprintf('%.1f', cData.SNR)}; 
     else
        colData = {sprintf('%d',nSpikes); sprintf('%.1f', cData.vpp)}; 
@@ -78,9 +81,7 @@ function colData = qualityScoreStrings (cData, nSpikes, hClust, hCfg, bSNR)
         
     colData = [colData; rows];
     
-    if hCfg.annotFunc ~= "None"
-        expTime = single(max(hClust.spikeTimes))/hCfg.sampleRate;
-        firingRate = single(nSpikes)/expTime;       
+    if hCfg.annotFunc ~= "None"      
         autoCall = feval( hCfg.annotFunc, firingRate, cData.vpp, cData.SNR, ...
                 cData.ISIRatio, cData.ISIViolations, cData.IsoDist, cData.firingStd );
         callCell = {sprintf('%s', autoCall)};
