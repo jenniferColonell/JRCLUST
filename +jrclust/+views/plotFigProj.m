@@ -35,7 +35,7 @@ function hFigProj = plotFigProj(hFigProj, hClust, sitesToShow, selected, boundSc
 
         % plot boundary
         hFigProj.addTable('hTable', [0, nSites], '-', 'Color', [.5 .5 .5]);
-        hFigProj.addDiag('hDiag', [0, nSites], '-', 'Color', [0 0 0], 'LineWidth', 1.5);
+        hFigProj.addDiag('hDiag', [0, nSites], '-', 'Color', [0 0 1], 'LineWidth', 2);
         hFigProj.setHideOnDrag('background');
     end
 

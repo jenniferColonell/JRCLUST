@@ -28,6 +28,7 @@ function computeQualityScores(obj, updateMe)
         unitLRatio_ = obj.unitLRatio;
         unitISIRatio_ = obj.unitISIRatio;
         unitISIViolations_ = obj.unitISIViolations;
+        unitFP_ = obj.unitFP;
         unitFiringStd_ = obj.unitFiringStd;
         updateMe = updateMe(:)';
     end
@@ -52,11 +53,12 @@ function computeQualityScores(obj, updateMe)
         unitFiringStd_(iCluster) = std(timeHist)/mean(timeHist);
         
         % Fraction of False postive events (fp)
-%         expTime = single(max(obj.spikeTimes))/obj.hCfg.sampleRate;
-%         refPeriod = 0.0015;       
-%         nSamples1p5ms = round(obj.hCfg.sampleRate * refPeriod);
-%         nViolation = sum(diffCtimes <= nSamples1p5ms);
-%         unitFP_(iCluster) = (nViolation * expTime)/(2* refPeriod * clusterSpikes_ * clusterSpikes_);
+        expTime = single(max(obj.spikeTimes))/obj.hCfg.sampleRate;
+        refPeriod = 0.0015;       
+        nSamples1p5ms = round(obj.hCfg.sampleRate * refPeriod);
+        nViolation = sum(diffCtimes <= nSamples1p5ms);
+        nSpike = numel(clusterSpikes_);
+        unitFP_(iCluster) = (nViolation * expTime)/(2* refPeriod * nSpike * nSpike);
 
         % Compute L-ratio and isolation distance (use neighboring features)
         iSite = obj.clusterSites(iCluster);
@@ -108,7 +110,7 @@ function computeQualityScores(obj, updateMe)
 
     obj.unitISIRatio = unitISIRatio_;
     obj.unitISIViolations = unitISIViolations_;
-    %obj.unitFP = unitFP_;
+    obj.unitFP = unitFP_;
     obj.unitIsoDist = unitIsoDist_;
     obj.unitLRatio = unitLRatio_;
     obj.unitPeaksRaw = unitPeaksRaw_; % unitPeaks is set elsewhere

@@ -61,6 +61,7 @@ classdef (Abstract) Clustering < handle
         unitVppRaw;         % peak-to-peak voltage of raw waveforms at peak site, per cluster
         unitISIRatio;       % inter-spike interval ratio #(ISI <= 2ms)/#(ISI <= 20ms), per cluster
         unitISIViolations;  % absolute number of ISI violoations (ISI <= 2ms), per cluster
+        unitFP;             % Allen/Hill estimate of false positive rat ein a unit, estimated from ISI
         unitIsoDist;        % isolation distance
         unitLRatio;         % L-ratio
         nSitesOverThresh;   % number of sites exceeding the detection threshold, per cluster

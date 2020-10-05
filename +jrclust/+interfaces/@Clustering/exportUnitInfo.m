@@ -44,6 +44,9 @@ function uInfo = exportUnitInfo(obj, iCluster)
     if ~isempty(obj.unitISIViolations)
         uInfo.ISIViolations = obj.unitISIViolations(iCluster);
     end
+    if ~isempty(obj.unitFP)
+        uInfo.FP = obj.unitFP(iCluster);
+    end
     if ~isempty(obj.unitIsoDist)
         uInfo.IsoDist = obj.unitIsoDist(iCluster);
     end

@@ -18,13 +18,13 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
     IsoDist = obj.unitIsoDist(:);
     LRatio = obj.unitLRatio(:);
     ISIRatio = obj.unitISIRatio(:);
-    %FP = obj.unitFP(:);
+    FP = obj.unitFP(:);
     note = obj.clusterNotes(:);
 
     filename = jrclust.utils.subsExt(obj.hCfg.configFile, '_quality.csv');
 
     try
-        table_ = table(ID, SNR, centerSite, nSpikes, xPos, yPos, uVmin, uVpp, IsoDist, LRatio, ISIRatio, note);
+        table_ = table(ID, SNR, centerSite, nSpikes, xPos, yPos, uVmin, uVpp, IsoDist, LRatio, ISIRatio, FP, note);
         writetable(table_, filename);
     catch ME
         warning('Failed to export: %s', ME.message);

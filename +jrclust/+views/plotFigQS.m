@@ -21,9 +21,9 @@ function plotFigQS(hFigQS, hClust, hCfg, selected, maxAmp)
     tbl = uitable(hFigQS.hFig);
     
     if bSNR
-        tbl.RowName = {'Firing (Hz)', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', 'SNR', '%FP', 'ISI Viol', 'IsoDist', 'FiringStd'};
     else
-        tbl.RowName = {'Firing (Hz)', 'Vpp', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', '%FP', 'ISI Viol', 'IsoDist', 'FiringStd'};
     end
     
     if hCfg.annotFunc ~= "None"
@@ -74,7 +74,7 @@ function colData = qualityScoreStrings (cData, nSpikes, hClust, hCfg, bSNR)
     end
     
     % rest of the rows:
-    rows = {sprintf('%.2f', cData.ISIRatio*100); ...
+    rows = {sprintf('%.2f', cData.FP*100); ...
            sprintf('%d', cData.ISIViolations); ...
            sprintf('%.1f', cData.IsoDist); ...
            sprintf('%.2f', cData.firingStd)};
@@ -83,7 +83,7 @@ function colData = qualityScoreStrings (cData, nSpikes, hClust, hCfg, bSNR)
     
     if hCfg.annotFunc ~= "None"      
         autoCall = feval( hCfg.annotFunc, firingRate, cData.vpp, cData.SNR, ...
-                cData.ISIRatio, cData.ISIViolations, cData.IsoDist, cData.firingStd );
+                cData.FP, cData.ISIViolations, cData.IsoDist, cData.firingStd );
         callCell = {sprintf('%s', autoCall)};
         colData = [colData; callCell];
     end
@@ -140,6 +140,13 @@ function mergeCol = mergeQS( hClust, hCfg, selected, bSNR)
     
     mData.ISIRatio = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
     mData.ISIViolations = sum(diffCtimes <= nSamples2ms);
+    
+    % Fraction of False postive events (fp)
+    expTime = single(max(hClust.spikeTimes))/hCfg.sampleRate;
+    refPeriod = 0.0015;       
+    nSamples1p5ms = round(hCfg.sampleRate * refPeriod);
+    nViolation = sum(diffCtimes <= nSamples1p5ms);
+    mData.FP = (nViolation * expTime)/(2* refPeriod * nSpikesM * nSpikesM);
     
     % Histogram spike times into 100 bins (arbitrary)
     timeHist = histcounts(mData.times, 100);  %Fixed 100 bins
