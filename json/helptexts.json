@@ -22,6 +22,12 @@
                 "[M] Merge selected units",
                 "[S] Split unit"
     ],
+    "FigTrial1": [ "[H] Display this help",             
+                   "[S] Split unit"
+    ],
+    "FigTrial2": [ "[H] Display this help",
+                   "[M] Merge selected units"                               
+    ],
     "FigISI": [ "[H] Display this help",
                 "[M] Merge selected units",
                 "[S] Split unit"

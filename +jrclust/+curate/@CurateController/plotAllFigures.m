@@ -31,13 +31,13 @@ function plotAllFigures(obj)
         hFigTime.hFunKey = @obj.keyPressFigTime;
     end
     
-    % ISI histogram response to keypresses
+    % Quality scores response to keypresses
     if obj.hasFig('FigQS')
         % set key and mouse handles
         hFigQS = obj.hFigs('FigQS');
         hFigQS.hFunKey = @obj.keyPressFigQS;
     end
-    
+        
     % Return map response to keypresses
     if obj.hasFig('FigISI')
         % set key and mouse handles

@@ -73,6 +73,8 @@ classdef CurateController < handle
         keyPressFigTime(obj, hObject, hEvent);
         keyPressFigWav(obj, hObject, hEvent);
         keyPressFigQS(obj, hObject, hEvent);
+        keyPressFigPSTH1(obj, hObject, hEvent);
+        keyPressFigPSTH2(obj, hObject, hEvent);
         keyPressFigISI(obj, hObject, hEvent);
         keyPressFigHist(obj, hObject, hEvent);
         keyPressFigCorr(obj, hObject, hEvent);

@@ -17,6 +17,16 @@ function updateFigPSTH(obj, doCreate)
 
     obj.hFigs('FigTrial1') = hFigTrial1;
     obj.hFigs('FigTrial2') = hFigTrial2;
+
+    % set key and mouse handles
+    hFigTrial1.hFunKey = @obj.keyPressFigPSTH1;
+    hFigTrial1.figData.helpText = strjoin(obj.helpTexts.("FigTrial1"), '\n');
+
+    % set key and mouse handles
+    hFigTrial2.hFunKey = @obj.keyPressFigPSTH2;
+    hFigTrial2.figData.helpText = strjoin(obj.helpTexts.("FigTrial2"), '\n');
+
+
 end
 
 %% LOCAL FUNCTIONS
