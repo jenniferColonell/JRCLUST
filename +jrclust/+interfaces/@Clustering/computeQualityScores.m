@@ -21,6 +21,8 @@ function computeQualityScores(obj, updateMe)
     nSamples20ms = round(obj.hCfg.sampleRate * .02);
     
     refPeriod = obj.hCfg.refracInt/1000;
+    minISIPeriod = 0.0001667; % in seconds
+    nSamplesMinISI = round(minISIPeriod*obj.hCfg.sampleRate);
     nSamplesRefPeriod = round(obj.hCfg.sampleRate * refPeriod);
     expTime = single(max(obj.spikeTimes))/obj.hCfg.sampleRate;
     
@@ -50,17 +52,24 @@ function computeQualityScores(obj, updateMe)
         
         % define ISI ratio as #(ISI <= 2ms)/#(ISI <= 20ms)
         unitISIRatio_(iCluster) = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
-        unitISIViolations_(iCluster) = sum(diffCtimes <= nSamplesRefPeriod);
+        unitISIViolations_(iCluster) = ...
+            sum((diffCtimes <= nSamplesRefPeriod) & (diffCtimes >= nSamplesMinISI ));
         
         % Histogram spike times into 100 bins (arbitrary)
         timeHist = histcounts(clusterTimes_, 100);  %Fixed 100 bins
         unitFiringStd_(iCluster) = std(timeHist)/mean(timeHist);
         
         % Fraction of False postive events (fp), following calculation in
-        % Allen ecephys pipeline and Hill paper
+        % in Hill (J. Neuroscience, 2011)
         nSpike = numel(clusterSpikes_);
-        unitFP_(iCluster) = (unitISIViolations_(iCluster) * expTime)/(2* refPeriod * nSpike * nSpike);
-
+        c = unitISIViolations_(iCluster)*expTime/(2*(refPeriod - minISIPeriod) * nSpike * nSpike );
+        
+        if c < 0.25
+            unitFP_(iCluster) = (1 - sqrt(1 - 4*c))/2;
+        else
+            unitFP_(iCluster) = 1;
+        end
+        
         % Compute L-ratio and isolation distance (use neighboring features)
         iSite = obj.clusterSites(iCluster);
 
