@@ -28,6 +28,7 @@ classdef (Abstract) Clustering < handle
         clusterCentroids;   % centroids of clusters on the probe
         clusterNotes;       % notes on clusters
         clusterSites;       % mode site per cluster
+        refPeriodMS;        % refractory period used to calculate quality scores
         editPos;            % current position in edit history
         history;            % cell array, log of merge/split/delete operations
         meanWfGlobal;       % mean filtered waveforms for each cluster over all sites

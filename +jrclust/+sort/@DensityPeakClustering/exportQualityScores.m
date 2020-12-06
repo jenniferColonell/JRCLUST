@@ -7,24 +7,43 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
         fGui = 0;
     end
 
+    %specify variables and variable names
+    %custom variable names allow inclusion of info about the calculation
+    %(e.g. refractory period used).
     ID = (1:obj.nClusters)';
+    varNames{1} = 'cluID';
     SNR = obj.unitSNR(:);
+    varNames{2} = 'SNR',
     centerSite = obj.clusterSites(:) - double(zeroIndex);
+    varNames{3} = 'centerSite';
     nSpikes = obj.unitCount(:);
+    varNames{4} = 'nSpikes';
     xPos = obj.clusterCentroids(:, 1);
+    varNames{5} = 'xPos_um';
     yPos = obj.clusterCentroids(:, 2);
+    varNames{6} = 'yPos_um';
     uVmin = obj.unitPeaksRaw(:);
+    varNames{7} = 'uVmin';
     uVpp = obj.unitVppRaw(:);
+    varNames{8} = 'uVpp';
     IsoDist = obj.unitIsoDist(:);
+    varNames{9} = 'IsoDist';
     LRatio = obj.unitLRatio(:);
-    ISIRatio = obj.unitISIRatio(:);
+    varNames{10} = 'LRatio';
+    ISIRatio = obj.unitISIRatio(:);        
+    varNames{11} = ('ISIRatio_2ms_20ms');
     FP = obj.unitFP(:);
+    ref_ms = obj.hCfg.refracInt;
+    varNames{12} = sprintf('FP_%.2fms', ref_ms);
     note = obj.clusterNotes(:);
-
+    varNames{13} = ('curator_note');
     filename = jrclust.utils.subsExt(obj.hCfg.configFile, '_quality.csv');
 
     try
-        table_ = table(ID, SNR, centerSite, nSpikes, xPos, yPos, uVmin, uVpp, IsoDist, LRatio, ISIRatio, FP, note);
+        table_ = table(ID, SNR, centerSite, nSpikes, xPos, yPos, uVmin, ...
+                 uVpp, IsoDist, LRatio, ISIRatio, FP, note, ...
+                 'VariableNames', varNames);
+        
         writetable(table_, filename);
     catch ME
         warning('Failed to export: %s', ME.message);

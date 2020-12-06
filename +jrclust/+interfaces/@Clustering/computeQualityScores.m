@@ -6,6 +6,10 @@ function computeQualityScores(obj, updateMe)
     end
 
     obj.hCfg.updateLog('qualScores', 'Computing cluster quality scores', 1, 0);
+    
+    % save the refractory period used for quality score calculation
+    % saved here to ensure it is entered even if history is unchanged
+    obj.refPeriodMS = obj.hCfg.refracInt;
 
     unitVmin = squeeze(min(obj.meanWfGlobal));
     unitVmax = squeeze(max(obj.meanWfGlobal));
@@ -50,10 +54,12 @@ function computeQualityScores(obj, updateMe)
         clusterTimes_ = obj.spikeTimes(clusterSpikes_);
         diffCtimes = diff(clusterTimes_);
         
-        % define ISI ratio as #(ISI <= 2ms)/#(ISI <= 20ms)
-        unitISIRatio_(iCluster) = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
+        % define ISI ratio as #(ISI violations)/#(ISI <= 20ms)
+        % note old defintion was #(ISI <= 2ms)/#(ISI <= 20ms)
         unitISIViolations_(iCluster) = ...
             sum((diffCtimes <= nSamplesRefPeriod) & (diffCtimes >= nSamplesMinISI ));
+        unitISIRatio_(iCluster) = unitISIViolations_(iCluster)./sum(diffCtimes <= nSamples20ms);
+
         
         % Histogram spike times into 100 bins (arbitrary)
         timeHist = histcounts(clusterTimes_, 100);  %Fixed 100 bins
@@ -143,6 +149,5 @@ function computeQualityScores(obj, updateMe)
     obj.nSitesOverThresh = nSitesOverThresh_;
     obj.siteRMS = siteRMS_;
     obj.unitFiringStd = unitFiringStd_;
-
     obj.hCfg.updateLog('qualScores', 'Finished computing cluster quality scores', 0, 1);
 end

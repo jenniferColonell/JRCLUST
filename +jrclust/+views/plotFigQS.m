@@ -21,9 +21,9 @@ function plotFigQS(hFigQS, hClust, hCfg, selected, maxAmp)
     tbl = uitable(hFigQS.hFig);
     
     if bSNR
-        tbl.RowName = {'Firing (Hz)', 'Vpp', 'SNR', '%FP', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
     else
-        tbl.RowName = {'Firing (Hz)', 'Vpp', '%FP', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
     end
     
     if hCfg.annotFunc ~= "None"
@@ -74,16 +74,21 @@ function colData = qualityScoreStrings (cData, nSpikes, hClust, hCfg, bSNR)
     end
     
     % rest of the rows:
-    rows = {sprintf('%.2f', cData.FP*100); ...
+%     rows = {sprintf('%.2f', cData.FP*100); ...
+%            sprintf('%d', cData.ISIViolations); ...
+%            sprintf('%.1f', cData.IsoDist); ...
+%            sprintf('%.2f', cData.firingStd)};
+    rows = {sprintf('%.2f', cData.ISIRatio*100); ...
            sprintf('%d', cData.ISIViolations); ...
            sprintf('%.1f', cData.IsoDist); ...
            sprintf('%.2f', cData.firingStd)};
         
     colData = [colData; rows];
     
-    if hCfg.annotFunc ~= "None"      
-        autoCall = feval( hCfg.annotFunc, firingRate, cData.vpp, cData.SNR, ...
-                cData.FP, cData.ISIViolations, cData.IsoDist, cData.firingStd );
+    if hCfg.annotFunc ~= "None"   
+        autoCall = feval( hCfg.annotFunc, firingRate, cData );
+%         autoCall = feval( hCfg.annotFunc, firingRate, cData.vpp, cData.SNR, ...
+%                 cData.FP, cData.ISIViolations, cData.IsoDist, cData.firingStd );
         callCell = {sprintf('%s', autoCall)};
         colData = [colData; callCell];
     end
@@ -135,18 +140,27 @@ function mergeCol = mergeQS( hClust, hCfg, selected, bSNR)
     mData.times = sort(hClust.spikeTimes(mergedSpikes)); 
     diffCtimes = diff(mData.times);
     
-    nSamples2ms = round(hCfg.sampleRate * .002);
+    %nSamples2ms = round(hCfg.sampleRate * .002);
     nSamples20ms = round(hCfg.sampleRate * .02);
+    nSamplesRefPer = round(hCfg.sampleRate * hCfg.refracInt/1000);
+    minISIPeriod = 0.0001667; % in seconds
+    nSamplesMinISI = round(minISIPeriod*hCfg.sampleRate);
     
-    mData.ISIRatio = sum(diffCtimes <= nSamples2ms)./sum(diffCtimes <= nSamples20ms);
-    mData.ISIViolations = sum(diffCtimes <= nSamples2ms);
+    mData.ISIViolations = sum((diffCtimes <= nSamplesRefPer) & (diffCtimes >= nSamplesMinISI ));;
+    mData.ISIRatio = mData.ISIViolations/sum(diffCtimes <= nSamples20ms);
     
-    % Fraction of False postive events (fp)
+    % Fraction of False postive events (fp), following calculation in
+    % in Hill (J. Neuroscience, 2011)
     expTime = single(max(hClust.spikeTimes))/hCfg.sampleRate;
-    refPeriod = 0.0015;       
-    nSamples1p5ms = round(hCfg.sampleRate * refPeriod);
-    nViolation = sum(diffCtimes <= nSamples1p5ms);
-    mData.FP = (nViolation * expTime)/(2* refPeriod * nSpikesM * nSpikesM);
+    c = mData.ISIViolations*expTime/(2*(hCfg.refracInt - minISIPeriod) * nSpikesM * nSpikesM );
+
+    if c < 0.25
+        mData.FP = (1 - sqrt(1 - 4*c))/2;
+    else
+        mData.FP = 1;
+    end
+    
+
     
     % Histogram spike times into 100 bins (arbitrary)
     timeHist = histcounts(mData.times, 100);  %Fixed 100 bins
