@@ -45,7 +45,7 @@ function S = loadMetadata(metafile)
             probeType = '3A';
             S.probeOpt = S.imProbeOpt;
         elseif isfield(S,'imDatPrb_type')
-            if S.imDatPrb_type == 0 || S.imDatPrb_type == 1100 
+            if S.imDatPrb_type == 0 || S.imDatPrb_type == 1100 || S.imDatPrb_type == 1101
                 probeType = 'NP1'; 
             elseif S.imDatPrb_type == 21 || S.imDatPrb_type == 24                
                 probeType = 'NP2';

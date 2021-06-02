@@ -72,6 +72,10 @@ function keyPressFigProj(obj, ~, hEvent)
 
         case 's' %split
             obj.splitPoly(hFigProj, jrclust.utils.keyMod(hEvent, 'shift'));
+            
+        case 'u' %toggle showing unit (foreground) spikes
+            hFigProj.toggleVisible('foreground');
+            hFigProj.toggleVisible('foreground2');
         
     end % switch
 end

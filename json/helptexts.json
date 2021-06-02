@@ -16,7 +16,8 @@
                 "[M] Merge selected units",
                 "[P] Toggle PC pair (e.g., 1 and 2; 2 and 3; 1 and 3) (only for `pca`, `ppca`, or `gpca` features)" ,
                 "[R] Reset scale",
-                "[S] Split unit"
+                "[S] Split unit",
+                "[U] Toggle unit spikes"
     ],
     "FigQS": [  "[H] Display this help",
                 "[M] Merge selected units",

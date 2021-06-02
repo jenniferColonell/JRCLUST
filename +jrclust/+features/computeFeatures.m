@@ -1,5 +1,7 @@
 function [features1, features2, features3, spikeWindows] = computeFeatures(spikeWindows, hCfg, nSitesEvt)
     %COMPUTEFEATURES Compute features for spikes
+    % input spikeWindows nSamples x nSpikes x nSites; the call is followed by
+    % permute [1,3,2]; permute here returns to nSamples x nSpikes x nSites.
     if nargin < 3
         nSitesEvt = [];
     end

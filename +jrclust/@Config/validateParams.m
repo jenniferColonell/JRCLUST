@@ -3,7 +3,8 @@ function validateParams(obj)
     if obj.nSites == 0
         obj.error('No siteMap specified', 'Bad probe configuration');
     end
-
+    obj.nSites
+    size(obj.siteLoc,1)
     if size(obj.siteLoc, 1) ~= obj.nSites
         obj.error('Malformed probe geometry', 'Bad probe configuration');
         return;
