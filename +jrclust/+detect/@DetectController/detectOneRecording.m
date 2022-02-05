@@ -18,6 +18,7 @@ function recData = detectOneRecording(obj, hRec, fids, impTimes, impSites, siteT
                      'spikeAmps', cast([], obj.hCfg.dataType), ...
                      'spikeSites', int32([]), ...
                      'centerSites', int32([]), ...
+                     'spikeFoot', int32([]),...
                      'rawShape', [diff(obj.hCfg.evtWindowRawSamp) + 1, size(obj.hCfg.siteNeighbors, 1), 0], ...
                      'filtShape', [diff(obj.hCfg.evtWindowSamp) + 1, size(obj.hCfg.siteNeighbors, 1), 0], ...
                      'spikesFilt2', zeros(diff(obj.hCfg.evtWindowSamp) + 1, size(obj.hCfg.siteNeighbors, 1), 0), ...
@@ -29,6 +30,7 @@ function recData = detectOneRecording(obj, hRec, fids, impTimes, impSites, siteT
     hRec.openRaw();
 
     % precompute threshold for entire recording (requires 2 passes through data)
+   
     if obj.hCfg.getOr('precomputeThresh', 0)
         samplesPre = [];
         loadOffset = 0;
@@ -83,7 +85,9 @@ function recData = detectOneRecording(obj, hRec, fids, impTimes, impSites, siteT
             nPadPre = size(samplesPre, 1);
             nPadPost = size(samplesPost, 1);
             bounds = [nPadPre + 1, size(iSamplesFilt, 1) - nPadPost]; % inclusive
-            success = hRec.writeFilt(iSamplesFilt(bounds(1):bounds(2), :));
+            %to write out a filtered file in original sglx format
+            success = hRec.writeFilt(iSamplesFilt(bounds(1):bounds(2), :)');
+            %success = hRec.writeFilt(iSamplesFilt(bounds(1):bounds(2), :));
             if ~success % abort
                 siteThresh = [];
                 obj.hCfg.precomputeThresh = 0;
@@ -180,16 +184,17 @@ function recData = detectOneRecording(obj, hRec, fids, impTimes, impSites, siteT
                               'samplesFilt', iSamplesFilt, ...
                               'keepMe', keepMe, ...
                               'spikeTimes', iSpikeTimes, ...
-                              'spikeSites', iSpikeSites, ...
+                              'spikeSites', iSpikeSites, ...                             
                               'siteThresh', siteThresh, ...
                               'nPadPre', nPadPre, ...
                               'nPadPost', nPadPost);
 
-            % find peaks: adds spikeAmps, updates spikeTimes, spikeSites,
+            % find peaks: adds spikeAmps and spikeFoot, updates spikeTimes, spikeSites,
             %             siteThresh
             loadData = obj.findPeaks(loadData);
             if ~isempty(loadData.spikeTimes)
                 recData.spikeAmps = cat(1, recData.spikeAmps, loadData.spikeAmps);
+                recData.spikeFoot = cat(1, recData.spikeFoot, loadData.spikeFoot);
                 recData.spikeSites = cat(1, recData.spikeSites, loadData.spikeSites);
                 recData.siteThresh = [recData.siteThresh, loadData.siteThresh];
 

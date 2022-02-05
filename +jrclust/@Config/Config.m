@@ -83,8 +83,17 @@ classdef Config < dynamicprops
 
             % for setting temporary parameters
             obj.tempParams = containers.Map();
+            
+            obj.loadParams(userParams); 
 
-            obj.loadParams(userParams);
+            
+    if isempty(obj.nSitesEvt)
+        fprintf('no nSitesEvt specified before validateParams\n');
+    else
+        fprintf('obj.nSitesEvt before calling validateParams = %d\n', obj.nSitesEvt);
+    end
+
+
             if ~skipValidation
                 obj.validateParams();
             end

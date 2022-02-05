@@ -18,10 +18,11 @@ function spikeData = findPeaks(obj, spikeData)
         end
         obj.hCfg.nPadPre = nPadPre;
 
-        [spikeTimes, spikeAmps, spikeSites] = jrclust.utils.detectPeaks(samplesFilt, siteThresh, keepMe, obj.hCfg);
+        [spikeTimes, spikeAmps, spikeSites, spikeFoot] = jrclust.utils.detectPeaks(samplesFilt, siteThresh, keepMe, obj.hCfg);
     else
         spikeTimes = spikeTimes + nPadPre;
         spikeAmps = samplesFilt(sub2ind(size(samplesFilt), spikeTimes, spikeSites)); % @TODO read spikes at the site and time
+        spikeFoot = ones(size(spikeSites)); %TODO put in a measurement of footprint for imported spiek times
     end
 
     % reject spikes within the overlap region
@@ -32,10 +33,12 @@ function spikeData = findPeaks(obj, spikeData)
         spikeTimes = spikeTimes(inBounds);
         spikeAmps  = spikeAmps(inBounds);
         spikeSites = spikeSites(inBounds);
+        spikeFoot = spikeFoot(inBounds);
     end
 
     spikeData.siteThresh = siteThresh(:);
     spikeData.spikeTimes = spikeTimes;
     spikeData.spikeAmps = spikeAmps;
     spikeData.spikeSites = spikeSites;
+    spikeData.spikeFoot = spikeFoot;
 end

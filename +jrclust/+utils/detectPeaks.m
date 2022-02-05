@@ -1,4 +1,4 @@
-function [spikeTimes, spikeAmps, spikeSites] = detectPeaks(samplesIn, siteThresh, keepMe, hCfg)
+function [spikeTimes, spikeAmps, spikeSites, spikeFoot] = detectPeaks(samplesIn, siteThresh, keepMe, hCfg)
     %DETECTPEAKS Detect peaks for each site
     samplesIn = jrclust.utils.tryGpuArray(samplesIn, hCfg.useGPU);
 
@@ -28,7 +28,7 @@ function [spikeTimes, spikeAmps, spikeSites] = detectPeaks(samplesIn, siteThresh
     % Group spiking events using vrWav_mean1. already sorted by time
     if hCfg.getOr('fMerge_spk', 1)
         hCfg.updateLog('eventsMerged', 'Merging duplicate spiking events', 1, 0);
-        [spikeTimes, spikeAmps, spikeSites] = mergePeaks(spikesBySite, ampsBySite, hCfg);
+        [spikeTimes, spikeAmps, spikeSites, spikeFoot] = mergePeaks(spikesBySite, ampsBySite, hCfg);
         hCfg.updateLog('eventsMerged', sprintf('%d spiking events found', numel(spikeTimes)), 0, 1);
     else
         spikeTimes = jrclust.utils.neCell2mat(spikesBySite);
@@ -41,6 +41,9 @@ function [spikeTimes, spikeAmps, spikeSites] = detectPeaks(samplesIn, siteThresh
             siteOnes{iSite} = iSite * ones(nSpikesSite(iSite), 1);
         end
         spikeSites = jrclust.utils.neCell2mat(siteOnes);
+        
+        % with no merging, call spikeFoot is set to one for each spike
+        spikeFoot = ones(size(spikeSites));
 
         % sort by time
         [spikeTimes, argsort] = sort(spikeTimes, 'ascend');

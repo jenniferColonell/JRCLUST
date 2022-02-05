@@ -22,6 +22,7 @@ function res = detect(obj)
     res = struct('siteThresh', siteThresh, ...
                  'spikeTimes', [], ...
                  'spikeAmps', [], ...
+                 'spikeFoot', [], ...
                  'centerSites', [], ...
                  'rawShape', [], ...
                  'filtShape', [], ...
@@ -58,6 +59,7 @@ function res = detect(obj)
 
             % take sites assoc with times between limits
             if ~isempty(obj.importSites)
+                size(inInterval)
                 impSites = obj.importSites(inInterval);
             end
         end
@@ -70,6 +72,7 @@ function res = detect(obj)
         res.siteThresh = [res.siteThresh, recData.siteThresh];
         res.spikeTimes = cat(1, res.spikeTimes, recData.spikeTimes + recOffset);
         res.spikeAmps = cat(1, res.spikeAmps, recData.spikeAmps);
+        res.spikeFoot = cat(1, res.spikeFoot, recData.spikeFoot);
         res.centerSites = cat(1, res.centerSites, recData.centerSites);
         res.spikesFilt2 = cat(3, res.spikesFilt2, recData.spikesFilt2);
         res.spikesFilt3 = cat(3, res.spikesFilt3, recData.spikesFilt3);

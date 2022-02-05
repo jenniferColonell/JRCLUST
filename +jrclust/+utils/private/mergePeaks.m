@@ -1,4 +1,4 @@
-function [spikeTimes, spikeAmps, spikeSites] = mergePeaks(spikesBySite, ampsBySite, hCfg)
+function [spikeTimes, spikeAmps, spikeSites, spikeFoot] = mergePeaks(spikesBySite, ampsBySite, hCfg)
     %MERGEPEAKS Merge duplicate peak events
     nSites = numel(spikesBySite);
     spikeTimes = jrclust.utils.neCell2mat(spikesBySite);
@@ -10,7 +10,8 @@ function [spikeTimes, spikeAmps, spikeSites] = mergePeaks(spikesBySite, ampsBySi
     spikeSites = int32(spikeSites(argsort));
     spikeTimes = int32(spikeTimes);
 
-    [mergedTimes, mergedAmps, mergedSites] = deal(cell(nSites,1));
+    % create cell arrays o hold the merged results by site
+    [mergedTimes, mergedAmps, mergedSites, mergedFoot] = deal(cell(nSites,1));
 
     try
         % avoid sending the entire hCfg object out to workers
@@ -19,7 +20,7 @@ function [spikeTimes, spikeAmps, spikeSites] = mergePeaks(spikesBySite, ampsBySi
                         'evtDetectRad', obj.hCfg.evtDetectRad);
         parfor iSite = 1:nSites
             try
-                [mergedTimes{iSite}, mergedAmps{iSite}, mergedSites{iSite}] = ...
+                [mergedTimes{iSite}, mergedAmps{iSite}, mergedSites{iSite}, mergedFoot{iSite}] = ...
                     mergeSpikesSite(spikeTimes, spikeAmps, spikeSites, iSite, cfgSub);
             catch % don't try to display an error here
             end
@@ -27,7 +28,7 @@ function [spikeTimes, spikeAmps, spikeSites] = mergePeaks(spikesBySite, ampsBySi
     catch % parfor failure
         for iSite = 1:nSites
             try
-                [mergedTimes{iSite}, mergedAmps{iSite}, mergedSites{iSite}] = ...
+                [mergedTimes{iSite}, mergedAmps{iSite}, mergedSites{iSite}, mergedFoot{iSite}] = ...
                     mergeSpikesSite(spikeTimes, spikeAmps, spikeSites, iSite, hCfg);
             catch ME
                 warning('failed to merge spikes on site %d: %s', iSite, ME.message);
@@ -39,16 +40,20 @@ function [spikeTimes, spikeAmps, spikeSites] = mergePeaks(spikesBySite, ampsBySi
     spikeTimes = jrclust.utils.neCell2mat(mergedTimes);
     spikeAmps = jrclust.utils.neCell2mat(mergedAmps);
     spikeSites = jrclust.utils.neCell2mat(mergedSites);
+    spikeFoot = jrclust.utils.neCell2mat(mergedFoot);
 
     [spikeTimes, argsort] = sort(spikeTimes); % sort by time
     spikeAmps = jrclust.utils.tryGather(spikeAmps(argsort));
     spikeSites = spikeSites(argsort);
+    spikeFoot = spikeFoot(argsort);
 end
 
 %% LOCAL FUNCTIONS
-function [timesOut, ampsOut, sitesOut] = mergeSpikesSite(spikeTimes, spikeAmps, spikeSites, iSite, hCfg)
+function [timesOut, ampsOut, sitesOut, footprintOut] = mergeSpikesSite(spikeTimes, spikeAmps, spikeSites, iSite, hCfg)
     %MERGESPIKESSITE Merge spikes in the refractory period
-    nLims = int32(abs(hCfg.refracIntSamp));
+    mergeTime = round(30000*(2.0/1000));
+    nLims = int32(mergeTime);
+    %nLims = int32(abs(hCfg.refracIntSamp));
 
     % find neighboring spikes
     nearbySites = jrclust.utils.findNearbySites(hCfg.siteLoc, iSite, hCfg.evtDetectRad); % includes iSite
@@ -56,6 +61,9 @@ function [timesOut, ampsOut, sitesOut] = mergeSpikesSite(spikeTimes, spikeAmps, 
     timesBySite = arrayfun(@(jSite) spikeTimes(spikesBySite{jSite}), 1:numel(nearbySites), 'UniformOutput', 0);
     ampsBySite = arrayfun(@(jSite) spikeAmps(spikesBySite{jSite}), 1:numel(nearbySites), 'UniformOutput', 0);
 
+    fprintf('iSite, num nearby: %d, %d\n', iSite, numel(nearbySites));
+    
+    
     iiSite = (nearbySites == iSite);
     iSpikes = spikesBySite{iiSite};
     iTimes = timesBySite{iiSite};
@@ -64,11 +72,13 @@ function [timesOut, ampsOut, sitesOut] = mergeSpikesSite(spikeTimes, spikeAmps, 
     % search over peaks on neighboring sites and in refractory period to
     % see which peaks on this site to keep
     keepMe = true(size(iSpikes));
-    for jjSite = 1:numel(spikesBySite)
+    siteDet = cell(size(iSpikes)); % list of sites with signal from this spike;
+    tempFoot = ones(size(iSpikes));   %count of number of sites on which the spike appears; always on at least 1
+    for jjSite = 1:numel(spikesBySite) %for all the sites in this neighborhood
         jSite = nearbySites(jjSite);
 
-        jSpikes = spikesBySite{jjSite};
-        jTimes = timesBySite{jjSite};
+        jSpikes = spikesBySite{jjSite}; %indicies of the spiks on jjSite not used)
+        jTimes = timesBySite{jjSite};   
         jAmps = ampsBySite{jjSite};
 
         if iSite == jSite
@@ -91,7 +101,7 @@ function [timesOut, ampsOut, sitesOut] = mergeSpikesSite(spikeTimes, spikeAmps, 
             iLocs = iLocs(jLocs);
 
             % drop spikes on iSite where spikes on jSite have larger
-            % magnitudes
+            % magnitudes. Those will be counted as part of the jSite spike
             nearbyLarger = abs(jAmps(jLocs)) > abs(iAmps(iLocs));
             keepMe(iLocs(nearbyLarger)) = 0;
 
@@ -104,11 +114,32 @@ function [timesOut, ampsOut, sitesOut] = mergeSpikesSite(spikeTimes, spikeAmps, 
                     keepMe(iLocs(ampsEqual)) = 0;
                 end
             end
+            
+            % keep a count of spikes with amplitudes <= the amplitude of the target spike           
+            nearbySmaller = find(abs(jAmps(jLocs)) <= abs(iAmps(iLocs)));
+
+            for kk = 1:numel(nearbySmaller)
+                currInd = iLocs(nearbySmaller(kk));
+                siteDet{currInd} = [siteDet{currInd}, jSite];
+            end
+            %tempFoot(iLocs(nearbySmaller)) = tempFoot(iLocs(nearbySmaller)) + 1;
+            
         end
     end
+
 
     % keep the peak spikes only
     timesOut = iTimes(keepMe);
     ampsOut = iAmps(keepMe);
     sitesOut = repmat(int32(iSite), size(timesOut));
+    
+    keepMeInd = find(keepMe);
+    footprintOut = ones(size(timesOut));
+    %fprintf('iSite: %d\n', iSite);       
+    for kk = 1:numel(keepMeInd)
+        currInd = keepMeInd(kk);
+        %siteDet{currInd}
+        footprintOut(kk) = 1+numel(unique(siteDet{currInd}));        
+    end
+    %footprintOut = int32(tempFoot(keepMe));
 end

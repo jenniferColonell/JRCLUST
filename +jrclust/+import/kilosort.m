@@ -69,6 +69,7 @@ nClusters = numel(goodClusters);
 
 spikeSites = zeros(size(spikeClusters), 'like', spikeClusters);
 for iTemplate = 1:nTemplates
+    % TODO add unwhitening here?
     template = squeeze(templates(iTemplate, :, :));
     [~, tSite] = min(min(template));
 
@@ -231,7 +232,7 @@ if ismember(hCfg.figList,'FigRD')
         hCfg.figPos = hCfg.figPos(keepFigIdx);
     end
 end
-hCfg.corrRange = [0.75 1];
+%hCfg.corrRange = [0.75 1];
 
 % save out param file
 hCfg.save();
