@@ -419,7 +419,7 @@
                 "attributes": [
                     "scalar",
                     "integer",
-                    "positive"
+                    "nonnegative"
                 ]
             },
             "section": ["spike detection"]
@@ -891,7 +891,7 @@
                 "FigSim",
                 "FigTime",
                 "FigWav",
-                "FigQS"
+                "FigQS"                
             ],
             "validation": {
                 "classes": ["cell"],
@@ -909,7 +909,8 @@
                     "FigSim",
                     "FigTime",
                     "FigWav",
-                    "FigQS"
+                    "FigQS",
+                    "FigCurNote"
                 ]
             },
             "section": [

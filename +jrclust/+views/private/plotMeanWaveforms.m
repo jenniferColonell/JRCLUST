@@ -12,7 +12,7 @@ function hFigWav = plotMeanWaveforms(hFigWav, hClust, maxAmp, channel_idx)
     [nSamples, nSites, ~] = size(waveforms);
     nClusters = numel(showSubset);
     nSitesShow = size(hCfg.siteNeighbors, 1);
-
+    
     % determine x
     if hCfg.showRaw
         xOffset = hCfg.evtWindowRawSamp(2)/(diff(hCfg.evtWindowRawSamp) + 1);

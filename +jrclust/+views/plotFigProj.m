@@ -72,13 +72,15 @@ function hFigProj = plotFigProj(hFigProj, hClust, sitesToShow, selected, boundSc
     % plot foreground spikes
     plotFeatures(hFigProj, 'foreground', fgYData, fgXData, boundScale, hCfg);
     
+    centerSite1 = hClust.clusterSites(selected(1));
     % plot secondary foreground spikes
     if numel(selected) == 2
+        centerSite2 = hClust.clusterSites(selected(2));
         plotFeatures(hFigProj, 'foreground2', fg2YData, fg2XData, boundScale, hCfg);
-        figTitle = sprintf('Unit %d (black), Unit %d (red); (press [H] for help)', selected(1), selected(2));
+        figTitle = sprintf('Unit %d (black), Unit %d (red); center (%d/%d); (press [H] for help)', selected(1), selected(2), centerSite1, centerSite2);
     else % or hide the plot
         hFigProj.clearPlot('foreground2');
-        figTitle = sprintf('Unit %d (black); (press [H] for help)', selected(1));
+        figTitle = sprintf('Unit %d (black); center site %d; (press [H] for help)', selected(1), centerSite1);
         hFigProj.figData.foreground2.XData = nan;
         hFigProj.figData.foreground2.YData = nan;
     end

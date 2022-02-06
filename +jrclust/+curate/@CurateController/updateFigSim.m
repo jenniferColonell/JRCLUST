@@ -29,14 +29,17 @@ function hFigSim = plotFigSim(hFigSim, hClust, hCfg, selected, showSubset)
                         'YTick', 1:nClusters, ...
                         'YTickLabel', xyLabels);
         
-        if ~isfield(hFigSim.figData,'figView')
-            if isa(hClust, 'jrclust.sort.TemplateClustering')
-                hFigSim.figData.figView = 'template'; % start out showing template sim scores
-            else
-                hFigSim.figData.figView = 'waveform';
-            end
-        end
+% JIC -- use waveform metric even when we have the template sim score
+%         if ~isfield(hFigSim.figData,'figView')
+%             if isa(hClust, 'jrclust.sort.TemplateClustering')
+%                 hFigSim.figData.figView = 'template'; % start out showing template sim scores
+%             else
+%                 hFigSim.figData.figView = 'waveform';
+%             end
+%         end
 
+        hFigSim.figData.figView = 'waveform';
+        
         hFigSim.axApply('default', @axis, [0 nClusters 0 nClusters] + .5);
         hFigSim.axApply('default', @axis, 'xy')
         hFigSim.axApply('default', @grid, 'on');

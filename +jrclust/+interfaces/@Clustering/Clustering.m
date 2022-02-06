@@ -26,6 +26,7 @@ classdef (Abstract) Clustering < handle
     properties (SetObservable)
         annotatedOnly;      % IDs of units which have annotations
         clusterCentroids;   % centroids of clusters on the probe
+        curNote;            % Curator note for whole clustering
         clusterNotes;       % notes on clusters
         clusterSites;       % mode site per cluster
         refPeriodMS;        % refractory period used to calculate quality scores

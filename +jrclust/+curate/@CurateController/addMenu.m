@@ -15,6 +15,7 @@ function addMenu(obj, hFig)
     uimenu(obj.hMenus('FileMenu'), 'Label', 'Export selected mean unit waveforms to workspace', 'Callback', @(hO, hE) obj.exportMeanWf(0));
     uimenu(obj.hMenus('FileMenu'), 'Label', 'Export all traces from the selected unit', 'Callback', @(hO, hE) obj.exportTraces());
     uimenu(obj.hMenus('FileMenu'), 'Label', 'Export firing rate for all units', 'Callback', @(hO, hE) obj.exportFiringRate());
+    uimenu(obj.hMenus('FileMenu'), 'Label', 'Add Curator Note', 'Callback', @(hO, hE) obj.addCurNote(), 'Separator', 'on');
     uimenu(obj.hMenus('FileMenu'), 'Label', 'Print summary', 'Callback', @(hO, hE) obj.summarize(), 'Separator', 'on');
     uimenu(obj.hMenus('FileMenu'), 'Label', 'Exit', 'Callback', @(hO, hE) obj.endSession(), 'Separator', 'on', 'Accelerator', 'Q');
 
@@ -45,7 +46,7 @@ function addMenu(obj, hFig)
     uimenu(obj.hMenus('ViewMenu'), 'Label', '[N]umbers (toggle)', 'Callback', @(hO, hE) obj.keyPressFigWav([], struct('Key', 'n')));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Show raw waveform', 'Callback', @(hO, hE) obj.toggleRaw(hO), 'Separator', 'on');
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display single units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'single'), 'Separator', 'on');
-    uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display ok units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'ok'));
+    uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display unk units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'unk'));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display annotated units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display non-annotated units only', 'Callback', @(hO, hE) obj.updateSubset(setdiff(1:obj.hClust.nClusters, obj.hClust.annotatedOnly),0));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display all units', 'Callback', @(hO, hE) obj.updateSubset(1:obj.hClust.nClusters, 0));
@@ -65,8 +66,8 @@ function addMenu(obj, hFig)
 
     obj.hMenus('InfoMenu') = uimenu(hFig, 'Label', '', 'Tag', 'InfoMenu');
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Annotate unit', 'Callback', @(hO, hE) obj.annotateUnit('', 1));
-    uimenu(obj.hMenus('InfoMenu'), 'Label', 'Single unit', 'Callback', @(hO, hE) obj.annotateUnit('single', 0), 'Accelerator', '1');
-    uimenu(obj.hMenus('InfoMenu'), 'Label', 'Multi unit', 'Callback', @(hO, hE) obj.annotateUnit('multi', 0), 'Accelerator', '2');
+    uimenu(obj.hMenus('InfoMenu'), 'Label', 'Unimodal', 'Callback', @(hO, hE) obj.annotateUnit('u', 0), 'Accelerator', '1');
+    uimenu(obj.hMenus('InfoMenu'), 'Label', 'Overlapped', 'Callback', @(hO, hE) obj.annotateUnit('o', 0), 'Accelerator', '2');
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Noise', 'Callback', @(hO, hE) obj.annotateUnit('noise', 0));
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Clear annotation', 'Callback', @(hO, hE) obj.annotateUnit('', 0));
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Equal to', 'Callback', @(hO, hE) obj.annotateUnit('=', 1));

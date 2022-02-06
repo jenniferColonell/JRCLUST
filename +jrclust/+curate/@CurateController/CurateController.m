@@ -98,6 +98,7 @@ classdef CurateController < handle
         updateFigPSTH(obj, doCreate);
         updateFigWav(obj);
         updateFigQS(obj);
+        updateFigCurNote(obj);
     end
 
     %% UTILITY METHODS

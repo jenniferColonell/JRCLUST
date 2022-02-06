@@ -73,9 +73,16 @@ function figPos = defaultFigPos(figList)
                
            case 'FigQS'
                if hasFigRD
-                   figPos{f} = [.85 .4 .15 .10];
+                   figPos{f} = [.85 0.4 .15 .10];
                else
                    figPos{f} = [.85 0 .15 .15];
+               end
+          
+           case 'FigCurNote'
+               if hasFigRD
+                   figPos{f} = [.85 0.3 .15 .10];
+               else
+                   figPos{f} = [.85 0.4 .15 .15];
                end
 
            case 'FigWav'

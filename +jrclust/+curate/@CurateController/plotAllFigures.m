@@ -74,6 +74,7 @@ function plotAllFigures(obj)
 
         hFigWav.hFunKey = @obj.keyPressFigWav;
         hFigWav.setMouseable(@obj.mouseClickFigWav);
+        hFigWav.toggleVisible('hSpkAll');
 
         % make this guy the key log
         hFigWav.figApply(@set, 'CloseRequestFcn', @obj.killFigWav);

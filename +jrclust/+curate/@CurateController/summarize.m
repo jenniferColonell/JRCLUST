@@ -27,13 +27,20 @@ function summarize(obj)
     summaryText{4} = sprintf('Spike count per cluster: min %d (cluster %d), max %d (cluster %d), median %i', ...
                              minCount, argMin, maxCount, argMax, medCount);
 
-    % print site counts
-    nSitesByCluster = cellfun(@(x) numel(unique(obj.hClust.spikeSites(x))), obj.hClust.spikesByCluster);
-    [minCount, argMin] = min(nSitesByCluster);
-    [maxCount, argMax] = max(nSitesByCluster);
-    medCount = median(nSitesByCluster);
-    summaryText{5} = sprintf('Site count per cluster: min %d (cluster %d), max %d (cluster %d), median %i', ...
-                             minCount, argMin, maxCount, argMax, medCount);
+    % print site counts (not so useful -- just a count of how many spikes have different peak than clsute site)
+%     nSitesByCluster = cellfun(@(x) numel(unique(obj.hClust.spikeSites(x))), obj.hClust.spikesByCluster);
+%     [minCount, argMin] = min(nSitesByCluster);
+%     [maxCount, argMax] = max(nSitesByCluster);
+%     medCount = median(nSitesByCluster);
+%     summaryText{5} = sprintf('Site count per cluster: min %d (cluster %d), max %d (cluster %d), median %i', ...
+%                              minCount, argMin, maxCount, argMax, medCount);
+
+
+    if ~isempty( obj.hClust.curNote{1})
+        summaryText{5} = sprintf('Curator note: %s', obj.hClust.curNote{1});
+    else
+        summaryText{5} = sprintf('Curator note: None');
+    end
 
     jrclust.utils.qMsgBox(strjoin(summaryText, '\n'));
 end
