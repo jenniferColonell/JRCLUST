@@ -6,7 +6,7 @@ function keyPressFigWav(obj, ~, hEvent)
     end
 
     hFigWav = obj.hFigs('FigWav');
-    factor = 4^double(jrclust.utils.keyMod(hEvent, 'shift')); % 1 or 4
+    factor = 1^double(jrclust.utils.keyMod(hEvent, 'shift')); % 1 or 4
     nSites = obj.hCfg.nSites;
 
     switch hEvent.Key

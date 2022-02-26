@@ -16,7 +16,7 @@ function addCurNote(obj)
 %     end
     
     obj.hClust
-    if ~isempty (obj.hClust.curNote{1})
+    if ~isempty (obj.hClust.curNote)
         note = sprintf('%s', obj.hClust.curNote{1});
     else 
         note = '';
