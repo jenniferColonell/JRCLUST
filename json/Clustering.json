@@ -12,6 +12,7 @@
         "unitISIRatio",
         "unitISIViolations",
         "unitFP",
+        "unitDup",
         "unitIsoDist",
         "unitLRatio",
         "unitSNR",

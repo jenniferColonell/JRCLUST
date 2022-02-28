@@ -47,6 +47,9 @@ function uInfo = exportUnitInfo(obj, iCluster)
     if ~isempty(obj.unitFP)
         uInfo.FP = obj.unitFP(iCluster);
     end
+    if ~isempty(obj.unitDup)
+        uInfo.Dup = obj.unitDup(iCluster);
+    end
     if ~isempty(obj.unitIsoDist)
         uInfo.IsoDist = obj.unitIsoDist(iCluster);
     end

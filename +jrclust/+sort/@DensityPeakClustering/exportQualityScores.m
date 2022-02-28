@@ -35,13 +35,15 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
     FP = obj.unitFP(:);
     ref_ms = obj.hCfg.refracInt;
     varNames{12} = sprintf('FP_%.2fms', ref_ms);
+    dup = obj.unitDup(:);
+    varNames{13} = sprintf('Num duplicates');
     note = obj.clusterNotes(:);
-    varNames{13} = ('curator_note');
+    varNames{14} = ('curator_note');
     filename = jrclust.utils.subsExt(obj.hCfg.configFile, '_quality.csv');
 
     try
         table_ = table(ID, SNR, centerSite, nSpikes, xPos, yPos, uVmin, ...
-                 uVpp, IsoDist, LRatio, ISIRatio, FP, note, ...
+                 uVpp, IsoDist, LRatio, ISIRatio, FP, dup, note, ...
                  'VariableNames', varNames);
         
         writetable(table_, filename);
@@ -66,7 +68,8 @@ function success = exportQualityScores(obj, zeroIndex, fGui)
                     sprintf('\tColumn 10: LRatio: L-ratio quality metric'), ...
                     sprintf('\tColumn 11: ISIRatio: ISI-ratio quality metric'), ...
                     sprintf('\tColumn 12: FP: rate of false positives estimated from ISI violations'), ...
-                    sprintf('\tColumn 13: note: user comments')};
+                    sprintf('\tColumn 13: Dup: spikes with ISI < 0.167 ms'), ...
+                    sprintf('\tColumn 14: note: user comments')};
 
         cellfun(@(x) fprintf('%s\n', x), helpText);
         if fGui

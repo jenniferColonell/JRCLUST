@@ -39,6 +39,7 @@ function computeQualityScores(obj, updateMe)
         unitISIRatio_ = obj.unitISIRatio;
         unitISIViolations_ = obj.unitISIViolations;
         unitFP_ = obj.unitFP;
+        unitDup_ = obj.unitDup;
         unitFiringStd_ = obj.unitFiringStd;
         updateMe = updateMe(:)';
     end
@@ -60,6 +61,8 @@ function computeQualityScores(obj, updateMe)
             sum((diffCtimes <= nSamplesRefPeriod) & (diffCtimes >= nSamplesMinISI ));
         unitISIRatio_(iCluster) = unitISIViolations_(iCluster)./sum(diffCtimes <= nSamples20ms);
 
+        % compute 'duplicates' -- spikes that are within nSamplesMinISI
+        unitDup_(iCluster) = sum(diffCtimes < nSamplesMinISI);
         
         % Histogram spike times into 100 bins (arbitrary)
         timeHist = histcounts(clusterTimes_, 100);  %Fixed 100 bins
@@ -127,6 +130,7 @@ function computeQualityScores(obj, updateMe)
     obj.unitISIRatio = unitISIRatio_;
     obj.unitISIViolations = unitISIViolations_;
     obj.unitFP = unitFP_;
+    obj.unitDup = unitDup_;
     obj.unitIsoDist = unitIsoDist_;
     obj.unitLRatio = unitLRatio_;
     obj.unitPeaksRaw = unitPeaksRaw_; % unitPeaks is set elsewhere
