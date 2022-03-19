@@ -24,6 +24,8 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
 
     
     siteMask = ismember(hClust.spikeSites, sitesToShow);
+    %siteMask = ismember(hClust.spikeSites, [1:383]);
+    sum(siteMask)
     % if we're only interested in a subset of time, just plot those spikes
     if ~isempty(hCfg.projTimeLimits)
         timeBound = round(hCfg.projTimeLimits*hCfg.sampleRate);
@@ -34,6 +36,7 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
 
     % spikes occurring on these sites and within these times and NOT in iCluster
     bgMask = (hClust.spikeClusters ~= iCluster) & siteMask & timeMask;
+
 
     if ~isempty(jCluster) 
         % spikes occurring on these sites and within these times and in jCluster

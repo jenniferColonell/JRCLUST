@@ -1,6 +1,5 @@
 function addMenu(obj, hFig)
     drawnow;
-
     outerPosition = hFig.outerPosition;
     hFig.figApply(@set, 'MenuBar','None');
 
@@ -66,8 +65,8 @@ function addMenu(obj, hFig)
 
     obj.hMenus('InfoMenu') = uimenu(hFig, 'Label', '', 'Tag', 'InfoMenu');
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Annotate unit', 'Callback', @(hO, hE) obj.annotateUnit('', 1));
-    uimenu(obj.hMenus('InfoMenu'), 'Label', 'Unimodal', 'Callback', @(hO, hE) obj.annotateUnit('u', 0), 'Accelerator', '1');
-    uimenu(obj.hMenus('InfoMenu'), 'Label', 'Overlapped', 'Callback', @(hO, hE) obj.annotateUnit('o', 0), 'Accelerator', '2');
+    uimenu(obj.hMenus('InfoMenu'), 'Label', obj.hCfg.annotationMenuLabels{1}, 'Callback', @(hO, hE) obj.annotateUnit(obj.hCfg.annotationUnitLabels{1}, 0), 'Accelerator', '1');
+    uimenu(obj.hMenus('InfoMenu'), 'Label', obj.hCfg.annotationMenuLabels{2}, 'Callback', @(hO, hE) obj.annotateUnit(obj.hCfg.annotationUnitLabels{2}, 0), 'Accelerator', '2');
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Noise', 'Callback', @(hO, hE) obj.annotateUnit('noise', 0));
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Clear annotation', 'Callback', @(hO, hE) obj.annotateUnit('', 0));
     uimenu(obj.hMenus('InfoMenu'), 'Label', 'Equal to', 'Callback', @(hO, hE) obj.annotateUnit('=', 1));
