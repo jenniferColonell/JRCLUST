@@ -21,9 +21,9 @@ function plotFigQS(hFigQS, hClust, hCfg, selected, maxAmp)
     tbl = uitable(hFigQS.hFig);
     
     if bSNR
-        tbl.RowName = {'Firing (Hz)', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', 'SNR', '%ISI', 'ISI Viol', 'N Dup', 'IsoDist', 'FiringStd'};
     else
-        tbl.RowName = {'Firing (Hz)', 'Vpp', '%ISI', 'ISI Viol', 'IsoDist', 'FiringStd'};
+        tbl.RowName = {'Firing (Hz)', 'Vpp', '%ISI', 'ISI Viol', 'N Dup', 'IsoDist', 'FiringStd'};
     end
     
     if hCfg.annotFunc ~= "None"
@@ -80,6 +80,7 @@ function colData = qualityScoreStrings (cData, nSpikes, hClust, hCfg, bSNR)
 %            sprintf('%.2f', cData.firingStd)};
     rows = {sprintf('%.2f', cData.ISIRatio*100); ...
            sprintf('%d', cData.ISIViolations); ...
+           sprintf('%d', cData.Dup); ...
            sprintf('%.1f', cData.IsoDist); ...
            sprintf('%.2f', cData.firingStd)};
         
@@ -160,7 +161,7 @@ function mergeCol = mergeQS( hClust, hCfg, selected, bSNR)
         mData.FP = 1;
     end
     
-
+    mData.Dup = sum(diffCtimes < nSamplesMinISI);
     
     % Histogram spike times into 100 bins (arbitrary)
     timeHist = histcounts(mData.times, 100);  %Fixed 100 bins

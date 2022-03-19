@@ -64,6 +64,7 @@ classdef (Abstract) Clustering < handle
         unitISIRatio;       % inter-spike interval ratio #(ISI <= 2ms)/#(ISI <= 20ms), per cluster
         unitISIViolations;  % absolute number of ISI violoations (ISI <= 2ms), per cluster
         unitFP;             % Allen/Hill estimate of false positive rat ein a unit, estimated from ISI
+        unitDup;            % number of duplicate spikes in a unit, defined as ISI < minISIPeriod = 0.0001667 sec (hard coded)
         unitIsoDist;        % isolation distance
         unitLRatio;         % L-ratio
         nSitesOverThresh;   % number of sites exceeding the detection threshold, per cluster
