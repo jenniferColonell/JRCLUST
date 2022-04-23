@@ -7,11 +7,14 @@ function plotFigCurNote(hFigCurNote, hClust)
     nClu = numel(hClust.clusterNotes);
     nCluStr = sprintf('%d',nClu);
     lastNoteStr = sprintf('None');
+    nAnnotated = 0;
     for i = 1:nClu
         if ~isempty(hClust.clusterNotes{i})
             lastNoteStr = sprintf('%d',i);
+            nAnnotated = nAnnotated + 1;
         end
     end
+    nAnnotatedStr = sprintf('%d',nAnnotated);
 
     %curator note, if present
     if isempty(hClust.curNote)
@@ -23,11 +26,11 @@ function plotFigCurNote(hFigCurNote, hClust)
     tbl.FontSize = 14;
     tbl.Units = 'normalized';
     tbl.Position = [0.05,0.10,0.90,0.90];
-    tbl.RowName = {'Cur Note (File)', 'Last annotation', 'Total Units'};
+    tbl.RowName = {'Cur Note (File)', 'Last annotation', 'Annotated units', 'Total Units'};
     tbl.ColumnWidth = {256};
     
     % table column = vertical cell array (semicolon separated) of character arrays
-    tbl.Data = {curNoteStr; lastNoteStr; nCluStr};
+    tbl.Data = {curNoteStr; lastNoteStr; nAnnotatedStr; nCluStr};
 
 end
 
