@@ -145,7 +145,7 @@ function processArgs(obj)
                 obj.isCompleted = 1;
             end
 
-        case 'import-ksort'
+        case 'import-ksort'            
             [hCfg_, res_] = jrclust.import.kilosort(obj.args{:});
             if isempty(hCfg_)
                 obj.error('Import failed');

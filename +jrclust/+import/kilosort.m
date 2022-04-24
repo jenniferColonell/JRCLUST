@@ -3,7 +3,12 @@ function [hCfg, res] = kilosort(loadPath,confirm_flag)
 
 if nargin<2
     confirm_flag=true;
+else
+    if strcmp(confirm_flag,'0') || strcmp(confirm_flag,'false') || strcmp(confirm_flag, 'False')
+        confirm_flag = false;
+    end
 end
+
 [hCfg, res] = deal([]);
 
 phyData = loadPhy(loadPath);
