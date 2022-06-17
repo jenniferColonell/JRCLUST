@@ -17,4 +17,8 @@ function [nLoads, nSamplesLoad, nSamplesFinal] = partitionLoad(nSamples, nSample
             nSamplesFinal = nSamplesFinal + nSamplesLoad;
         end
     end
+    %JIC hack to ensure last load has even number of samples
+%     if mod(nSamplesFinal,2) == 1
+%         nSamplesFinal = nSamplesFinal - 1;
+%     end
 end

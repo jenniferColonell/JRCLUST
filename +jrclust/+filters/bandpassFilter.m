@@ -16,9 +16,9 @@ end
 
 %% LOCAL FUNCTIONS
 function samplesIn = filtfiltChain(samplesIn, filtOpts)
+
     %FILTFILTCHAIN Construct a filter chain
     [cvrA, cvrB] = deal({});
-
     if ~isempty(filtOpts.freqLimBP)
        [cvrB{end+1}, cvrA{end+1}] = makeFilt_(filtOpts.freqLimBP, 'bandpass', filtOpts);
     end
@@ -51,10 +51,13 @@ function samplesIn = filtfiltChain(samplesIn, filtOpts)
 
     % first pass
     for iFilt=1:numel(cvrA)
+
+        % standard two pass time domain filter
         samplesIn = flipud(filter(cvrB{iFilt}, cvrA{iFilt}, ...
                 flipud(filter(cvrB{iFilt}, cvrA{iFilt}, samplesIn))));
+        
     end
-
+       
     if filtOpts.gainBoost ~= 1
         samplesIn = samplesIn * filtOpts.gainBoost;
     end
@@ -88,7 +91,7 @@ function [vrFiltB, vrFiltA] = makeFilt_(freqLimBP, vcType, filtOpts)
             elseif isinf(freqLimBP(2))
                 [vrFiltB, vrFiltA] = butter(filtOpts.filtOrder, freqLimBP(1),'high');
             else
-                [vrFiltB, vrFiltA] = butter(filtOpts.filtOrder, freqLimBP, vcType);    
+                [vrFiltB, vrFiltA] = butter(filtOpts.filtOrder, freqLimBP, vcType);
             end
         end
     else
@@ -131,4 +134,35 @@ function [num,den] = iirNotch(Wo, BW)
 
     num  = gain*[1 -2*cos(Wo) 1];
     den  = [1 -2*gain*cos(Wo) (2*gain-1)];
+end
+
+function samplesOut = freqDomainBP(filtOpts, samplesIn)
+
+    cutoff = filtOpts.freqLimBP;
+    fprintf('size of samplesIn\n');
+    [npts,nchan] = size(samplesIn)
+    
+    % calculate frequency values
+    binSize = 1/(npts*(1/filtOpts.sampleRate));
+    fpts = (-(npts/2):1:(npts/2-1))*binSize;    %this is the order after fftshift
+    
+    for j = 1:npts
+        % gain values for lowpass
+        g_lo(j) = ((1/(1+(fpts(j)/cutoff(2))^(2*filtOpts.filtOrder))))^(0.5);
+        % gain values for highpass
+        g_hi(j) = 1 - ((1/(1+(fpts(j)/cutoff(1))^(2*filtOpts.filtOrder))))^(0.5);
+    end
+    
+    % probably not the fastest implementation
+    % loop over channels, multiply by g_lo and g_hi, then transform back
+    samplesOut = zeros(npts,nchan,'single');
+    for j = 1:nchan
+        fft_raw = fftshift(fft(squeeze(samplesIn(:,j))));
+        fft_filt = fft_raw.*g_lo';
+        fprintf('size of fft_filt:\n');
+        fft_filt = fft_filt.*g_hi';
+        samplesOut(:,j) = ifft(fftshift(fft_filt));
+        fprintf( 'isreal: %d\n', isreal(samplesOut));
+    end  
+
 end

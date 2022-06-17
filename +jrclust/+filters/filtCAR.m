@@ -14,6 +14,7 @@ function [samplesOut, channelMeans] = filtCAR(samplesIn, windowPre, windowPost, 
     nPadPost = size(windowPost, 1);
 
     samplesOut = [windowPre; samplesIn; windowPost];
+
     if hCfg.useGPU
         samplesOut = jrclust.utils.tryGpuArray(samplesOut, hCfg.useGPU);
     end
