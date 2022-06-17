@@ -3,7 +3,12 @@ function [hCfg, res] = kilosort(loadPath,confirm_flag)
 
 if nargin<2
     confirm_flag=true;
+else
+    if strcmp(confirm_flag,'0') || strcmp(confirm_flag,'false') || strcmp(confirm_flag, 'False')
+        confirm_flag = false;
+    end
 end
+
 [hCfg, res] = deal([]);
 
 phyData = loadPhy(loadPath);
@@ -218,8 +223,10 @@ if any(oob)
     spikeTemplates = spikeTemplates(~oob);
     spikeSites = spikeSites(~oob);
     spikeClusters = spikeClusters(~oob);
-    cProj = cProj(:, ~oob);
-    cProjPC = cProjPC(:, :, ~oob);
+    if isfield(phyData, 'pc_features')
+        cProj = cProj(:, ~oob);
+        cProjPC = cProjPC(:, :, ~oob);
+    end
 end
 
 % set some specific params
@@ -241,7 +248,8 @@ hCfg.save();
 hDetect = jrclust.detect.DetectController(hCfg, spikeTimes, spikeSites);
 dRes = hDetect.detect();
 dRes.spikeSites = spikeSites;
-if isfield(phyData, 'templateFeatures') && isfield(phyData, 'templateFeatures')
+if isfield(phyData, 'templateFeatures') && isfield(phyData, 'pc_features')
+
     sRes = struct('spikeClusters', spikeClusters, ...
                   'spikeTemplates', spikeTemplates, ...
                   'simScore', simScore, ...
@@ -251,7 +259,8 @@ if isfield(phyData, 'templateFeatures') && isfield(phyData, 'templateFeatures')
                   'pcFeatures', cProjPC, ...
                   'pcFeatureInd', iNeighPC);
 else
-        sRes = struct('spikeClusters', spikeClusters, ...
+    % KS3-like output, with no feature info saved
+    sRes = struct('spikeClusters', spikeClusters, ...
                   'spikeTemplates', spikeTemplates, ...
                   'simScore', simScore, ...
                   'amplitudes', amplitudes);

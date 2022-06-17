@@ -61,7 +61,7 @@ function computeWaveformSim(obj, updateMe)
                       'fMode_cor', fMode_cor);
 
     if isempty(updateMe) % update everything
-        useParfor = 1;
+        useParfor = obj.hCfg.useParfor;
         scoreData.updateMe = true(obj.nClusters, 1);
         scoreData.simScoreOld = [];
     else

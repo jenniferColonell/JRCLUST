@@ -717,6 +717,43 @@
             },
             "section": ["display"]
         },
+        "annotationMenuLabels": {
+            "description": "Two labels for Annotate menu items",
+            "comment": "",
+            "default_value": [
+                "single",
+                "mua"              
+            ],
+            "validation": {
+                "classes": ["cell"],
+                "attributes": [
+                    "nonempty"
+                ]
+            },
+            "section": [
+                "curation",
+                "display"
+            ]
+        },
+        "annotationUnitLabels": {
+            "description": "Two labels for annotation from menu",
+            "comment": "",
+            "default_value": [
+                "single",
+                "mua"              
+            ],
+            "validation": {
+                "classes": ["cell"],
+                "attributes": [
+                    "nonempty"
+                ]
+            },
+            "section": [
+                "curation",
+                "display"
+            ]
+        },
+
         "corrRange": {
             "description": "Correlation score range to distinguish by color map",
             "comment": "",

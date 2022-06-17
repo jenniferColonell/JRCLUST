@@ -12,7 +12,7 @@ function loadParams(obj, filename)
     else
         error('Class not recognized: %s', class(filename));
     end
-
+    
     % read in default parameter set
     obj.paramSet = jrclust.utils.getDefaultParams(0);
 

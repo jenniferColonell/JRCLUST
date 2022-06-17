@@ -22,6 +22,7 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
         jCluster = [];
     end
 
+
     % get number of sites -- include spikes from all sites
     numSite = numel(hClust.spikesBySite);
     siteMask = ismember(hClust.spikeSites, (1:numSite));
@@ -35,6 +36,7 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
 
     % spikes occurring on these sites and within these times and NOT in iCluster
     bgMask = (hClust.spikeClusters ~= iCluster) & siteMask & timeMask;
+
 
     if ~isempty(jCluster) 
         % spikes occurring on these sites and within these times and in jCluster
