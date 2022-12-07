@@ -59,10 +59,10 @@ function keyPressFigWav(obj, ~, hEvent)
             obj.updateFigWav();
             obj.updateSelect(obj.selected, 1);
 
-        case {'d', 'backspace', 'delete'}
-            hFigWav.wait(1);
-            obj.deleteClusters();
-            hFigWav.wait(0);
+%         case {'d', 'backspace', 'delete'}
+%             hFigWav.wait(1);
+%             obj.deleteClusters();
+%             hFigWav.wait(0);
 
         case 'g'
             dlgAns = jrclust.utils.inputdlgNum('Go to a cluster', '', 1);
