@@ -11,7 +11,6 @@ function dispFeatures = getFigProjFeatures(hClust, sitesToShow, selected)
         dispFeature = 'vpp';
     end
     
-    
     iCluster = selected(1);
 
     if numel(selected) == 2

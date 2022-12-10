@@ -43,11 +43,13 @@ function keyPressFigProj(obj, ~, hEvent)
 
         case 'f' % toggle feature display
             if strcmp(obj.hCfg.dispFeature, 'vpp')
-                if isa(obj.hClust, 'jrclust.sort.TemplateClustering')
-                    obj.updateProjection('template');
-                else
-                    obj.updateProjection(obj.hCfg.clusterFeature);
-                end
+% JIC: really never want to show template projections, comment this out
+%                 if isa(obj.hClust, 'jrclust.sort.TemplateClustering')
+%                     obj.updateProjection('template');
+%                 else
+%                     obj.updateProjection(obj.hCfg.clusterFeature);
+%                end
+                obj.updateProjection(obj.hCfg.clusterFeature);
             else
                 obj.updateProjection('vpp');
             end
