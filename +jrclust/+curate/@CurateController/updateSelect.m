@@ -51,6 +51,7 @@ function updateSelect(obj, iClusters, force)
     obj.updateFigPos();
     obj.updateFigProj(1);
     obj.updateFigTime(1);
+    obj.updateFigPosTime();
     obj.updateFigPSTH(0);
     obj.updateFigQS();
     obj.updateFigCurNote();

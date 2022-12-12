@@ -945,6 +945,7 @@
                     "FigRD",
                     "FigSim",
                     "FigTime",
+                    "FigPosTime",
                     "FigWav",
                     "FigQS",
                     "FigCurNote"

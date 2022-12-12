@@ -30,6 +30,13 @@ function plotAllFigures(obj)
         hFigTime = obj.hFigs('FigTime');
         hFigTime.hFunKey = @obj.keyPressFigTime;
     end
+
+    % plot position vs. time
+    if obj.hasFig('FigPosTime')
+        % set key and mouse handles
+        hFigTime = obj.hFigs('FigPosTime');
+        hFigTime.hFunKey = @obj.keyPressFigPosTime;
+    end
     
     % Quality scores response to keypresses
     if obj.hasFig('FigQS')

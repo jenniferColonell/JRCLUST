@@ -25,6 +25,7 @@ end
 function figPos = defaultFigPos(figList)
     figPos = cell(1, numel(figList));
     hasFigRD = ismember('FigRD', figList);
+    hasFigPosTime = ismember('FigPosTime', figList);
 
     for f=1:length(figList)
        switch figList{f}
@@ -65,11 +66,15 @@ function figPos = defaultFigPos(figList)
                figPos{f} = [.5 .7 .35 .3];
 
            case 'FigTime'
-               if hasFigRD
-                   figPos{f} = [.15 0 .7 .2];
+               if hasFigPosTime
+                   figPos{f} = [.15 0.1 .7 .1];
+                   figPos(f) = [.15 0.0 .7 .1];
                else
-                   figPos{f} = [.15 0 .85 .2];
+                   figPos(f) = [.15 0.0 .7 .2]; 
                end
+        
+           case 'FigPosTime'
+               figPos(f) = [.15 0.0 .7 .1];
                
            case 'FigQS'
                if hasFigRD

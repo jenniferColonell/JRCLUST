@@ -81,6 +81,17 @@
                 "[R] Reset scale",
                 "[S] Split unit"
     ],
+    "FigPosTime": ["[Shift-click or wheel click, drag] Pan",
+                "[Mouse wheel] Zoom in/out",
+                "[X + Wheel] X-zoom select",
+                "[Y + Wheel] Y-zoom select",
+                "------------------",
+                "[B] Toggle background spikes",
+                "[H] Display this help",
+                "[M] Merge selected units",
+                "[R] Reset scale",
+                "[S] Split unit"
+    ],
     "FigWav": ["[Left-click] Select unit",
                "[Right-click] Select secondary unit",
                "[Shift-click or wheel click, drag] Pan",

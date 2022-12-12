@@ -17,6 +17,8 @@ function spawnFigures(obj)
                 figMenubar = 1;
             case 'FigTime'
                 figTitle = 'Feature vs. time';
+            case 'FigPosTime'
+                figTitle = 'Spike Z vs. time';
             case 'FigProj'
                 figTitle = 'Feature projection';
             case 'FigSim'

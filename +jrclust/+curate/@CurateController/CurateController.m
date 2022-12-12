@@ -71,6 +71,7 @@ classdef CurateController < handle
         keyPressFigSim(obj, hObject, hEvent);
         keyPressFigProj(obj, hObject, hEvent);
         keyPressFigTime(obj, hObject, hEvent);
+        keyPressFigPosTime(obj, hObject, hEvent);
         keyPressFigWav(obj, hObject, hEvent);
         keyPressFigQS(obj, hObject, hEvent);
         keyPressFigPSTH1(obj, hObject, hEvent);
@@ -95,6 +96,7 @@ classdef CurateController < handle
         updateFigProj(obj, doAutoscale);
         updateFigRD(obj);
         updateFigTime(obj, doAutoscale);
+        updateFigPosTime(obj);
         updateFigPSTH(obj, doCreate);
         updateFigWav(obj);
         updateFigQS(obj);
