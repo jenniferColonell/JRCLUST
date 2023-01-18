@@ -1,25 +1,32 @@
-function [dispPos, dispAmp, spikeTimesSecs, YLabel, dispSpikes] = getFigTimePos(hClust, iCluster, bBack)
+function [dispPos, dispAmp, dispLabel, spikeTimesSecs, bgUnits, YLabel, dispSpikes] = getFigTimePos(hClust, iCluster, bBack)
     %GETFIGTIMEPOS Collect positions of spikes on iCluster or nearby clusters (background) for display
     if bBack % get positions of 'background' spikes from clusters with centroids w/in 15 um
-        d2_thresh = 15^2;
+        X_thresh = 6;
+        Y_thresh = 25;
         currX = hClust.clusterCentroids(iCluster,1);
         currY = hClust.clusterCentroids(iCluster,2);
-        dist2 = (hClust.clusterCentroids(:,1)-currX).^2 + (hClust.clusterCentroids(:,2)-currY).^2;
-        cluList = dist2 < d2_thresh;
+        dX = abs(hClust.clusterCentroids(:,1)-currX);
+        dY = abs(hClust.clusterCentroids(:,2)-currY);
+        cluList = (dX < X_thresh) & (dY < Y_thresh);
+%         d2_thres = 15^2;
+%         dist2 = (hClust.clusterCentroids(:,1)-currX).^2 + (hClust.clusterCentroids(:,2)-currY).^2;
+%         cluList = dist2 < d2_thresh;
         cluList(iCluster) = 0;  % for background spikes, remove center cluster
+        bgUnits = find(cluList);
     else
         cluList = iCluster;
+        bgUnits = [];
     end
     
     hCfg = hClust.hCfg;
-    [dispPos, dispAmp, dispSpikes] = getClusterPos(hClust, cluList);
+    [dispPos, dispAmp, dispLabel, dispSpikes] = getClusterPos(hClust, cluList);
     spikeTimesSecs = double(hClust.spikeTimes(dispSpikes))/hCfg.sampleRate;
-    YLabel = 'spike z (um)';
+    YLabel = 'spike Y (um)';
 
 end
 
 %% LOCAL FUNCTIONS
-function [sampledPos, sampledAmp, sampledSpikes] = getClusterPos(hClust, cluList)
+function [sampledPos, sampledAmp, sampledLabels, sampledSpikes] = getClusterPos(hClust, cluList)
     %getClusterPos Get display positions for a cluster or
     %background cluster (those within 15 um)
     MAX_SAMPLE = 10000; % max points to display
@@ -31,7 +38,8 @@ function [sampledPos, sampledAmp, sampledSpikes] = getClusterPos(hClust, cluList
     sampledSpikes = jrclust.utils.subsample(sampledSpikes, MAX_SAMPLE);
     sampledPos = hClust.spikePositions(sampledSpikes,2);
     sampledAmp = abs(hClust.spikeAmps(sampledSpikes));
-
+    % cluster labels replaced with 1-number of clusters in this subset
+    [~,~,sampledLabels] = unique(hClust.spikeClusters(sampledSpikes)); 
 
     
 %     if isempty(iCluster) % select spikes based on sites

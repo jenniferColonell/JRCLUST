@@ -1,6 +1,6 @@
 function hFigPosTime = plotFigPosTime(hFigPosTime, hClust, hCfg, selected )
     %DOPLOTFIGTIME Plot features vs. time
-    timeLimits = double([0, abs(hClust.spikeTimes(end))/hCfg.sampleRate]);
+    timeLimits = double([abs(hClust.spikeTimes(1))/hCfg.sampleRate, abs(hClust.spikeTimes(end))/hCfg.sampleRate]);
 
     % construct plot for the first time
     if ~hFigPosTime.hasAxes('default')
@@ -26,7 +26,7 @@ function hFigPosTime = plotFigPosTime(hFigPosTime, hClust, hCfg, selected )
         end        
         
         % first time
-        hFigPosTime.addPlot('background', @line, nan, nan, 'Marker', '.', 'Color', hCfg.colorMap(1, :), 'MarkerSize', 5, 'LineStyle', 'none');
+        hFigPosTime.addPlot('background', @line, nan, nan, 'Marker', '.', 'Color', hCfg.colorMap(4, :), 'MarkerSize', 5, 'LineStyle', 'none');
         hFigPosTime.addPlot('foreground', @line, nan, nan, 'Marker', '.', 'Color', hCfg.colorMap(2, :), 'MarkerSize', 5, 'LineStyle', 'none');
         hFigPosTime.addPlot('foreground2', @line, nan, nan, 'Marker', '.', 'Color', hCfg.colorMap(3, :), 'MarkerSize', 5, 'LineStyle', 'none');
         hFigPosTime.axApply('default', @xlabel, 'Time (s)');
@@ -41,21 +41,37 @@ function hFigPosTime = plotFigPosTime(hFigPosTime, hClust, hCfg, selected )
         hFigPosTime.setHideOnDrag('background'); % hide background spikes when dragging
         
     end
-    [bgPos, bgAmp, bgTimes, ~, ~] = getFigTimePos(hClust, selected(1), 1); % background points
-    [fgPos, fgAmp, fgTimes, YLabel, ~] = getFigTimePos(hClust, selected(1), 0); % selected cluster points
+    [bgPos, bgAmp, bgLabel, bgTimes, bgUnits, ~, ~] = getFigTimePos(hClust, selected(1), 1); % background points
+    [fgPos, fgAmp, fgLabel, fgTimes, ~, YLabel, ~] = getFigTimePos(hClust, selected(1), 0); % selected cluster points
 
     if numel(selected) == 2
-        [fgPos2, fgAmp2, fgTimes2] = getFigTimePos(hClust, selected(2), 0);
-        figTitle = sprintf('Unit %d (black), Unit %d (red); center (%d/%d); (press [H] for help)', selected(1), selected(2));
+        [fgPos2, fgAmp2, fgLabel2, fgTimes2] = getFigTimePos(hClust, selected(2), 0);
+        figTitle = sprintf('Unit %d (black), Unit %d (red); (press [H] for help)', selected(1), selected(2));
     else        
         fgPos2 = [];
         fgTimes2 = [];
-        figTitle = sprintf('Unit %d (black); center site = %d; (press [H] for help)', selected(1));
+        fgLabels2 = [];
+        if ~isempty(bgUnits)
+            bgStr = '; back units: ';
+            for ib = 1:numel(bgUnits)
+                bgStr = sprintf('%s%d ', bgStr, bgUnits(ib));
+            end
+        else
+            bgStr = '';
+        end
+        figTitle = sprintf('Unit %d (black)%s; (press [H] for help)', selected(1), bgStr);
     end
    
+    if ~isempty(bgPos)
+        posLim = [min(min(bgPos),min(fgPos)), max(max(bgPos),max(fgPos))];
+    else
+        posLim = [min(fgPos), max(fgPos)];
+    end
+    if posLim(2) == posLim(1)
+        posLim(1) = posLim(1) - 5;
+        posLim(2) = posLim(1) + 10;
+    end
 
-    posLim = [min(min(bgPos),min(fgPos)), max(max(bgPos),max(fgPos))];
-    
     %update scatter plots
     hFigPosTime.updatePlot('background', bgTimes, bgPos);
     hFigPosTime.updatePlot('foreground', fgTimes, fgPos);

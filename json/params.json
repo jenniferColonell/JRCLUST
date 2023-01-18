@@ -704,16 +704,16 @@
         },
         "colorMap": {
             "description": "RGB color map for background, primary selected, secondary selected spikes, and sampled spikes",
-            "comment": "The first three values are the R values, the next three are the G values, and the last three are the B values.",
-            "default_value": [0.5, 0.5, 0.5, 0, 0, 0, 1, 0, 0],
+            "comment": "The first four values are the R values, the next four are the G values, and the last four are the B values.",
+            "default_value": [0,0,1,0,    1,0,0,0,   0,0,0,1],
             "validation": {
                 "classes": ["numeric"],
                 "attributes": [
                     "real",
                     "nonnegative",
-                    "numel", 9
+                    "numel", 12
                 ],
-                "postapply": "@(x) reshape(x, 3, 3)"
+                "postapply": "@(x) reshape(x, 4, 3)"
             },
             "section": ["display"]
         },

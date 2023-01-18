@@ -1,6 +1,6 @@
 function hFigTime = plotFigTime(hFigTime, hClust, hCfg, selected, maxAmp, iSite, channel_idx)
     %DOPLOTFIGTIME Plot features vs. time
-    timeLimits = double([0, abs(hClust.spikeTimes(end))/hCfg.sampleRate]);
+    timeLimits = double([abs(hClust.spikeTimes(1))/hCfg.sampleRate, abs(hClust.spikeTimes(end))/hCfg.sampleRate]);
 
     % construct plot for the first time
     if ~hFigTime.hasAxes('default')

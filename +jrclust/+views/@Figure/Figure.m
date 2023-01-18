@@ -241,6 +241,7 @@ classdef Figure < handle
                 if obj.hasPlot(plotKey)
                     obj.rmPlot(plotKey);
                 end
+
                 obj.hPlots(plotKey) = hFunPlot(hAx, varargin{:});
             end
         end
