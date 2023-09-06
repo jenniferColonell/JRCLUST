@@ -38,8 +38,9 @@ function S = loadMetadata(metafile)
         S.sampleRate = S.imSampRate;
         S.rangeMax = S.imAiRangeMax;
         S.rangeMin = S.imAiRangeMin;
-        
+        S.isImec = 1;
         S.probeOpt = [];
+
         % Determine probe type: 3A (0), 3B (1), or NP2.0 (2)
         if isfield(S,'imProbeOpt')
             probeType = '3A';
@@ -47,7 +48,7 @@ function S = loadMetadata(metafile)
         elseif isfield(S,'imDatPrb_type')
             if S.imDatPrb_type == 0 || S.imDatPrb_type == 1100 || S.imDatPrb_type == 1101
                 probeType = 'NP1'; 
-            elseif S.imDatPrb_type == 21 || S.imDatPrb_type == 24                
+            elseif S.imDatPrb_type == 21 || S.imDatPrb_type == 24  ||  S.imDatPrb_type == 2013          
                 probeType = 'NP2';
             else
                 probeType = 'unknown';
@@ -56,28 +57,53 @@ function S = loadMetadata(metafile)
             probeType = 'unknown';
         end
         
-        if strcmp(probeType,'3A') || strcmp(probeType, 'NP1')
-            % NP1-like or 3B data; both have 10 bit adc, gain specified in imro
-            S.adcBits = 10; % 10 bit adc but 16 bit saved
-            % read data from ~imroTbl
-            imroTbl = strsplit(S.imroTbl(2:end-1), ')(');
-            % parse first channel entry
-            imroTblChan = cellfun(@str2double, strsplit(imroTbl{2}, ' '));
-            S.gain = imroTblChan(4);
-            S.gainLFP = imroTblChan(5);
-        elseif strcmp(probeType,'NP2')
-            % NP 2.0 -- headstage has two docks          
-            S.adcBits = 14; % 14 bit adc but 16 bit saved
-            S.gain = 80; % constant gain
+        if isfield(S,'imChan0apGain')
+            % Newer metadata, read gain from file
+            S.gain = S.imChan0apGain;
+            if isfield(S,'imChan0lfGain')
+                S.gainLFP = S.imChan0apGain;
+            end
+            % Need to figure out a better way to do this...
+            switch(S.imMaxInt)
+                case 1024
+                    S.adcBits = 10;
+                case 2048
+                    S.adcBits = 12;
+                case 16384
+                    S.adcBits = 14;
+            end    
+                    
+        else
+            % older metadata, derive from probe type
+            if strcmp(probeType,'3A') || strcmp(probeType, 'NP1')
+                % NP1-like or 3B data; both have 10 bit adc, gain specified in imro
+                S.adcBits = 10; % 10 bit adc but 16 bit saved
+                % read data from ~imroTbl
+                imroTbl = strsplit(S.imroTbl(2:end-1), ')(');
+                % parse first channel entry
+                imroTblChan = cellfun(@str2double, strsplit(imroTbl{2}, ' '));
+                S.gain = imroTblChan(4);
+                S.gainLFP = imroTblChan(5);
+            elseif strcmp(probeType,'NP2')
+                % NP 2.0 -- headstage has two docks          
+                S.adcBits = 14; % 14 bit adc but 16 bit saved
+                S.gain = 80; % constant gain
+            end
         end
-
-        S.isImec = 1;
+            
     end
     
 
-    % Read shank index for all saved channels from snsShankMap
-    C = textscan(S.snsShankMap, '(%d:%d:%d:%d', ...
+    % Read shank index for all saved channels from snsGeomMap or
+    % snsShankMap
+    if isfield(S,'snsGeomMap')
+            C = textscan(S.snsGeomMap, '(%d:%d:%d:%d', ...
         'EndOfLine', ')', 'HeaderLines', 1 );
+    else 
+        % older metadata, read from snsShankMap
+        C = textscan(S.snsShankMap, '(%d:%d:%d:%d', ...
+            'EndOfLine', ')', 'HeaderLines', 1 );
+    end
     S.shanks = double(cell2mat(C(1)));
 
   
