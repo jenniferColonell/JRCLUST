@@ -36,10 +36,10 @@ function keyPressFigProj(obj, ~, hEvent)
         case 'b' % background spikes
             hFigProj.toggleVisible('background');
             
-        case {'d', 'backspace', 'delete'} % delete
-            hFigProj.wait(1);
-            obj.deleteClusters();
-            hFigProj.wait(0);
+%         case {'d', 'backspace', 'delete'} % delete
+%             hFigProj.wait(1);
+%             obj.deleteClusters();
+%             hFigProj.wait(0);
 
         case 'f' % toggle feature display
             if strcmp(obj.hCfg.dispFeature, 'vpp')

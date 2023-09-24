@@ -4,8 +4,18 @@ if nargin < 3
     silent = 0;
 end
 if nargin > 3
-    %make a new subset of units with clusterNote = targetAnnotation
+    if strcmp(targetAnnotation,'userSet')
+        % input dialog to get an annotation from user
+        user_rsp = inputdlg('Annotation to show','Input annotation to show',[1,75]);
+        if isempty(user_rsp)
+            return;
+        else
+            targetAnnotation = user_rsp;
+        end
+    end
+    % make a new subset of units with clusterNote = targetAnnotation
     showSubset = find(cellfun(@(c) strcmp(c,targetAnnotation), obj.hClust.clusterNotes));
+   
 end
     
 showSubset = intersect(1:obj.hClust.nClusters, showSubset);

@@ -44,8 +44,9 @@ function addMenu(obj, hFig)
     uimenu(obj.hMenus('ViewMenu'), 'Label', '[W]aveform (toggle)', 'Callback', @(hO, hE) obj.keyPressFigWav([], struct('Key', 'w')));
     uimenu(obj.hMenus('ViewMenu'), 'Label', '[N]umbers (toggle)', 'Callback', @(hO, hE) obj.keyPressFigWav([], struct('Key', 'n')));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Show raw waveform', 'Callback', @(hO, hE) obj.toggleRaw(hO), 'Separator', 'on');
-    uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display single units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'single'), 'Separator', 'on');
-    uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display unk units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'unk'));
+    uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display selected annotation', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'userSet'), 'Separator', 'on');
+    % uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display single units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'single'), 'Separator', 'on');
+    % uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display unk units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0, 'unk'));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display annotated units only', 'Callback', @(hO, hE) obj.updateSubset(obj.hClust.annotatedOnly, 0));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display non-annotated units only', 'Callback', @(hO, hE) obj.updateSubset(setdiff(1:obj.hClust.nClusters, obj.hClust.annotatedOnly),0));
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Display all units', 'Callback', @(hO, hE) obj.updateSubset(1:obj.hClust.nClusters, 0));

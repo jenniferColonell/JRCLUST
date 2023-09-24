@@ -40,10 +40,10 @@ function keyPressFigSim(obj, ~, hEvent)
             selected(1) = obj.showSubset(max(1, obj.unitIndex(selected(1)) - 1));
             obj.updateSelect(selected);
             
-        case {'d', 'backspace', 'delete'} % delete
-            hFigSim.wait(1);
-            obj.deleteClusters();
-            hFigSim.wait(0);
+%         case {'d', 'backspace', 'delete'} % delete
+%             hFigSim.wait(1);
+%             obj.deleteClusters();
+%             hFigSim.wait(0);
 
         case 'h' % help
             jrclust.utils.qMsgBox(hFigSim.figData.helpText, 1);

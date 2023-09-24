@@ -27,10 +27,10 @@ function keyPressFigTime(obj, ~, hEvent)
             hFigTime.figData.doPlotBG = hFigTime.toggleVisible('background');
             hFigTime.toggleVisible('background_hist');
             
-        case {'d', 'backspace', 'delete'} % delete
-            hFigTime.wait(1);
-            obj.deleteClusters();
-            hFigTime.wait(0);
+%         case {'d', 'backspace', 'delete'} % delete
+%             hFigTime.wait(1);
+%             obj.deleteClusters();
+%             hFigTime.wait(0);
 
         case 'f' % toggle feature display
             if strcmp(obj.hCfg.dispFeature, 'vpp')
