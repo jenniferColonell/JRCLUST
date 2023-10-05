@@ -81,7 +81,8 @@ function tracesFilt = plotFigTraces(hFigTraces, hCfg, tracesRaw, resetAxis, hClu
             offset = sum(cellfun(@(hR) hR.nSamples, hRecs));
         end
 
-        recTimes = hClust.spikeTimes - uint64(offset);
+        %recTimes = hClust.spikeTimes - uint64(offset);
+        recTimes = hClust.spikeTimes;
 
         tStart = single(hFigTraces.figData.windowBounds(1) - 1)/hCfg.sampleRate;
         if hCfg.nSegmentsTraces > 1

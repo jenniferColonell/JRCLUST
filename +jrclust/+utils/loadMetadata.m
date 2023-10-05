@@ -61,15 +61,15 @@ function S = loadMetadata(metafile)
             % Newer metadata, read gain from file
             S.gain = S.imChan0apGain;
             if isfield(S,'imChan0lfGain')
-                S.gainLFP = S.imChan0apGain;
+                S.gainLFP = S.imChan0lfGain;
             end
             % Need to figure out a better way to do this...
             switch(S.imMaxInt)
-                case 1024
+                case 512
                     S.adcBits = 10;
                 case 2048
                     S.adcBits = 12;
-                case 16384
+                case 8192
                     S.adcBits = 14;
             end    
                     
