@@ -26,7 +26,7 @@ function keyPressFigPosTime(obj, ~, hEvent)
             obj.updateFigPosTime(1);
 
         case 's' % split
-            obj.splitPoly(hFigTime, jrclust.utils.keyMod(hEvent, 'shift'));
+            obj.splitPoly(hFigPosTime, jrclust.utils.keyMod(hEvent, 'shift'));
 
     end % switch
 end

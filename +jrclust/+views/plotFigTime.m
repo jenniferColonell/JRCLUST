@@ -52,9 +52,9 @@ function hFigTime = plotFigTime(hFigTime, hClust, hCfg, selected, maxAmp, iSite,
     [bgFeatures, bgTimes] = getFigTimeFeatures(hClust, iSite); % plot background
     [fgFeatures, fgTimes, YLabel] = getFigTimeFeatures(hClust, iSite, selected(1),channel_idx); % plot primary selected cluster
 
-    centerSite1 = hClust.clusterSites(selected(1));
+    centerSite1 = channel_idx(hClust.clusterSites(selected(1)));
     if numel(selected) == 2
-        centerSite2 = hClust.clusterSites(selected(2));
+        centerSite2 = channel_idx(hClust.clusterSites(selected(2)));
         [fgFeatures2, fgTimes2] = getFigTimeFeatures(hClust, iSite, selected(2));
         figTitle = sprintf('Unit %d (black), Unit %d (red); center (%d/%d); (press [H] for help)', selected(1), selected(2), centerSite1, centerSite2);
     else        

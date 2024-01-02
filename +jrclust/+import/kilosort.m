@@ -67,9 +67,12 @@ nTemplates = size(templates, 1);
 spikeSites = zeros(size(spikeClusters), 'like', spikeClusters);
 % If there is a mean waveforms file available, extract peak site from the
 % mean waveform for each unit, set spikeSites using peak of mean waveform
-if isfield(phyData, 'mean_waveforms') 
-    unitMaxAll = squeeze(max(phyData.mean_waveforms,[],3));
-    unitMinAll = squeeze(min(phyData.mean_waveforms,[],3));
+if isfield(phyData, 'mean_waveforms')
+    % take only channels that were included in the sort
+    % phy indices for channels are zero based, so add 1
+    curr_mw = phyData.mean_waveforms(:,phyData.channel_map+1,:);
+    unitMaxAll = squeeze(max(curr_mw,[],3));
+    unitMinAll = squeeze(min(curr_mw,[],3));
     unitPPAll = unitMaxAll - unitMinAll;
     [~, tSite] = max(unitPPAll,[],2);
     for iCluster = 1:max(spikeClusters)
@@ -77,7 +80,6 @@ if isfield(phyData, 'mean_waveforms')
     end
 else
     for iTemplate = 1:nTemplates
-        % TODO add unwhitening here?
         template = squeeze(templates(iTemplate, :, :));
         template = template*phyData.whitening_mat_inv;
         [~, tSite] = min(min(template));
