@@ -53,40 +53,56 @@ templates = phyData.templates; % nTemplates x nSamples x nChannels
 
 % feature projections calculated by phy aren't used in the JRClust interface.
 % Rather, it extracts filtered waveforms to do its own calculations.
-% If they are absent, simply skip loading
-if isfield(phyData, 'template_features')
-    cProj = phyData.template_features';
-    iNeigh = phyData.template_feature_ind';    
-end
-if isfield(phyData, 'pc_features')
-    cProjPC = permute(phyData.pc_features, [2 3 1]); % nFeatures x nSites x nSpikes
-    iNeighPC = phyData.pc_feature_ind';
+% Since they aren't used, code to load them is commented out for now.
+% if isfield(phyData, 'template_features')
+%     cProj = phyData.template_features';
+%     iNeigh = phyData.template_feature_ind';    
+% end
+% if isfield(phyData, 'pc_features')
+%     cProjPC = permute(phyData.pc_features, [2 3 1]); % nFeatures x nSites x nSpikes
+%     iNeighPC = phyData.pc_feature_ind';
+% end
+
+nTemplates = size(templates, 1);
+spikeSites = zeros(size(spikeClusters), 'like', spikeClusters);
+% If there is a mean waveforms file available, extract peak site from the
+% mean waveform for each unit, set spikeSites using peak of mean waveform
+if isfield(phyData, 'mean_waveforms') 
+    unitMaxAll = squeeze(max(phyData.mean_waveforms,[],3));
+    unitMinAll = squeeze(min(phyData.mean_waveforms,[],3));
+    unitPPAll = unitMaxAll - unitMinAll;
+    [~, tSite] = max(unitPPAll,[],2);
+    for iCluster = 1:max(spikeClusters)
+        spikeSites(spikeClusters == iCluster) = tSite(iCluster);
+    end
+else
+    for iTemplate = 1:nTemplates
+        % TODO add unwhitening here?
+        template = squeeze(templates(iTemplate, :, :));
+        template = template*phyData.whitening_mat_inv;
+        [~, tSite] = min(min(template));
+        spikeSites(spikeTemplates == iTemplate) = tSite;
+    end
 end
 
+% KS2 and later don't have any junk clusters, but this removes any cluster
+% labels with zero spikes
 [clusterIDs, ~, indices] = unique(spikeClusters);
 goodClusters = clusterIDs(clusterIDs > 0);
 junkClusters = setdiff(clusterIDs, goodClusters);
 clusterIDsNew = [junkClusters' 1:numel(goodClusters)]';
 spikeClusters = clusterIDsNew(indices);
 
-nTemplates = size(templates, 1);
 nClusters = numel(goodClusters);
 
-spikeSites = zeros(size(spikeClusters), 'like', spikeClusters);
-for iTemplate = 1:nTemplates
-    % TODO add unwhitening here?
-    template = squeeze(templates(iTemplate, :, :));
-    [~, tSite] = min(min(template));
 
-    spikeSites(spikeTemplates == iTemplate) = tSite;
-end
 
 %%% try to detect the recording file
 % first check for a .meta file
 binfile = params.dat_path;
 metafile = jrclust.utils.absPath(jrclust.utils.subsExt(binfile, '.meta'));
 if isempty(metafile)
-    dlgAns = questdlg('Do you have a .meta file?', 'Import', 'No');
+    dlgAns = questdlg('Do you want to import the original metadata and binfile?', 'Import', 'No');
 
     switch dlgAns
         case 'Yes' % select .meta file
@@ -94,18 +110,21 @@ if isempty(metafile)
             if isempty(metafile)
                 return;
             end
-
-            if isempty(binfile)
-                binfile = jrclust.utils.subsExt(metafile, '.bin');
-            end
+            % assume user wants to use the binfile that matches the meta
+            % (rather than the corrected file created by KS2.5 or KS3)
+            binfile = jrclust.utils.subsExt(metafile, '.bin');
+            
 
         case 'No' % select recording file
-            if isempty(binfile)
-                [binfile, loadPath] = jrclust.utils.selectFile({'*.bin;*.dat', 'SpikeGLX recordings (*.bin, *.dat)'; '*.*', 'All Files (*.*)'}, 'Select a raw recording', loadPath, 0);
-                if isempty(binfile)
-                    return;
-                end
-            end
+            return;
+            % assume user is using binfile + associated parameters
+            % in params.py
+%             if isempty(binfile)
+%                 [binfile, loadPath] = jrclust.utils.selectFile({'*.bin;*.dat', 'SpikeGLX recordings (*.bin, *.dat)'; '*.*', 'All Files (*.*)'}, 'Select a raw recording', loadPath, 0);
+%                 if isempty(binfile)
+%                     return;
+%                 end
+%             end
 
         case {'Cancel', ''}
             return;

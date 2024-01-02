@@ -39,7 +39,6 @@ function updateSelect(obj, iClusters, force)
     end
     
     obj.projSites = obj.hCfg.siteNeighbors(1:nSites,iSite);
-    
     [~,idx] = sort(obj.channel_idx(obj.projSites));
     obj.projSites = obj.projSites(idx);
 

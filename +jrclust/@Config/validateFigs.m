@@ -68,13 +68,12 @@ function figPos = defaultFigPos(figList)
            case 'FigTime'
                if hasFigPosTime
                    figPos{f} = [.15 0.1 .7 .1];
-                   figPos(f) = [.15 0.0 .7 .1];
                else
-                   figPos(f) = [.15 0.0 .7 .2]; 
+                   figPos{f} = [.15 0.0 .7 .2]; 
                end
         
            case 'FigPosTime'
-               figPos(f) = [.15 0.0 .7 .1];
+               figPos{f} = [.15 0.0 .7 .1];
                
            case 'FigQS'
                if hasFigRD

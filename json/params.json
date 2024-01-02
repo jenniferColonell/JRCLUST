@@ -210,7 +210,7 @@
         "filterType": {
             "description": "Type of filter to use on raw data",
             "comment": "",
-            "default_value": "ndiff",
+            "default_value": "bandpass",
             "validation": {
                 "classes": ["char"],
                 "attributes": ["scalartext"],
@@ -242,7 +242,7 @@
         "freqLimBP": {
             "description": "Frequency cutoffs for bandpass filter",
             "comment": "",
-            "default_value": [300, 3000],
+            "default_value": [300, 9000],
             "validation": {
                 "classes": ["numeric"],
                 "attributes": [

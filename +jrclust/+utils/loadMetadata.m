@@ -46,10 +46,14 @@ function S = loadMetadata(metafile)
             probeType = '3A';
             S.probeOpt = S.imProbeOpt;
         elseif isfield(S,'imDatPrb_type')
-            if S.imDatPrb_type == 0 || S.imDatPrb_type == 1100 || S.imDatPrb_type == 1101
+            if S.imDatPrb_type == 0 || S.imDatPrb_type == 1100 
                 probeType = 'NP1'; 
             elseif S.imDatPrb_type == 21 || S.imDatPrb_type == 24  ||  S.imDatPrb_type == 2013          
                 probeType = 'NP2';
+            elseif S.imDatPrb_type == 1110
+                % UHD2, active version, needs it's own type because it has
+                % a unique imro table.
+                probeType = 'NP1110';
             else
                 probeType = 'unknown';
             end
@@ -63,16 +67,9 @@ function S = loadMetadata(metafile)
             if isfield(S,'imChan0lfGain')
                 S.gainLFP = S.imChan0lfGain;
             end
-            % Need to figure out a better way to do this...
-            switch(S.imMaxInt)
-                case 512
-                    S.adcBits = 10;
-                case 2048
-                    S.adcBits = 12;
-                case 8192
-                    S.adcBits = 14;
-            end    
-                    
+            maxInt_arr = pow2((0:16));
+            S.adcBits = find(maxInt_arr == S.imMaxInt);
+  
         else
             % older metadata, derive from probe type
             if strcmp(probeType,'3A') || strcmp(probeType, 'NP1')
@@ -84,6 +81,12 @@ function S = loadMetadata(metafile)
                 imroTblChan = cellfun(@str2double, strsplit(imroTbl{2}, ' '));
                 S.gain = imroTblChan(4);
                 S.gainLFP = imroTblChan(5);
+            elseif strcmp(probeType, 'NP1110')
+                S.adcBits = 10;
+                imroTbl = strsplit(S.imroTbl(2:end-1), ')(');
+                imroTblHeader = cellfun(@str2double, strsplit(imroTbl{1}, ','));
+                S.gain = imroTblHeader(4);
+                S.gainLFP = imroTblHeader(5);
             elseif strcmp(probeType,'NP2')
                 % NP 2.0 -- headstage has two docks          
                 S.adcBits = 14; % 14 bit adc but 16 bit saved

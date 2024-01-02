@@ -17,20 +17,22 @@ function keyPressFigProj(obj, ~, hEvent)
             projScale = hFigProj.figData.boundScale*sqrt(2)^factor;
             jrclust.views.rescaleFigProj(hFigProj, projScale, obj.hCfg);
 
-        case 'leftarrow' % go down one channel
-            if obj.projSites(1) - factor > 0
-                obj.projSites = obj.projSites - factor;
-            else
-                obj.projSites = obj.projSites - obj.projSites(1) + 1;
-            end
+        case 'leftarrow' % go down one site in sites as currently ordered
+            % projSites one-based indices of the sites the proj view grid
+            % in the original binary file.
+            % projSite(1) is the lower left in proj grid. 
+            % Shift to next factor 'down' in the curent site order, then get the nearest sites
+            iSite = obj.projSites(1);
+            iSite = obj.spatial_idx(max((obj.channel_idx(iSite) - factor),1)); % get index for nearest site in current order
+            nSites = numel(obj.projSites);
+            obj.projSites = obj.hCfg.siteNeighbors(1:nSites,iSite); % precalculated neighbors of this site
             obj.updateFigProj(0);
 
         case 'rightarrow' % go up one channel
-            if obj.projSites(end) + factor <= obj.hCfg.nSites
-                obj.projSites = obj.projSites + factor;
-            else
-                obj.projSites = obj.hCfg.nSites - (obj.hCfg.nSitesFigProj-1:-1:0);
-            end
+            iSite = obj.projSites(1);
+            iSite = obj.spatial_idx(min((obj.channel_idx(iSite) + factor),max(obj.channel_idx))); % get index for nearest site in current order
+            nSites = numel(obj.projSites);
+            obj.projSites = obj.hCfg.siteNeighbors(1:nSites,iSite); % precalculated neighbors of this site
             obj.updateFigProj(0);
 
         case 'b' % background spikes

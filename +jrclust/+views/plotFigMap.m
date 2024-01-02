@@ -13,10 +13,17 @@ function hFigMap = plotFigMap(hFigMap, hClust, hCfg, selected, channel_idx)
                         arrayfun(@(i) num2str(i), channel_idx(1:hCfg.nSites), 'UniformOutput', 0), ...
                         'VerticalAlignment', 'bottom', ...
                         'HorizontalAlignment', 'left');
+
+
         hFigMap.axApply('default', @xlabel, 'X Position (\mum)');
         hFigMap.axApply('default', @ylabel, 'Y Position (\mum)');
     else
         hFigMap.plotApply('hPatch', @set, 'CData', vpp);
+        
+        hFigMap.addPlot('hText', @text, hCfg.siteLoc(:, 1), hCfg.siteLoc(:, 2), ...
+                arrayfun(@(i) num2str(i), channel_idx(1:hCfg.nSites), 'UniformOutput', 0), ...
+                'VerticalAlignment', 'bottom', ...
+                'HorizontalAlignment', 'left');
     end
 
     hFigMap.axApply('default', @title, sprintf('Unit %d; Max: %0.1f \\muVpp', selected(1), max(clusterVpp)));

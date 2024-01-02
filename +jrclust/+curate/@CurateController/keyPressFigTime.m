@@ -16,6 +16,10 @@ function keyPressFigTime(obj, ~, hEvent)
             jrclust.views.rescaleFigTime(hFigTime, sqrt(2)^factor);
 
         case 'leftarrow' % go down one channel
+            % currSite is the position of the currently plotted site in the binary file
+            % channel_idx is the order in space (after any reordering).
+            % channel_idx(currSite) = position of the current site
+            % to move one channel in space, adjust channel_idx(currSite), then get that position in the binary 
             obj.currentSite = obj.spatial_idx(max(obj.channel_idx(obj.currentSite) - factor, 1));
             obj.updateFigTime(1);
 

@@ -35,8 +35,7 @@ function addMenu(obj, hFig)
     uimenu(obj.hMenus('EditMenu'), 'Label', 'Reorder sites by channel number', 'Callback', @(h0, hE) obj.reorderSites((1:obj.hCfg.nSites)'),'Separator','on');    
     uimenu(obj.hMenus('EditMenu'), 'Label', 'Reorder sites by location dimension 1 (X)', 'Callback', @(h0, hE) obj.reorderSites(obj.hCfg.siteLoc(:,1)));
     uimenu(obj.hMenus('EditMenu'), 'Label', 'Reorder sites by location dimension 2 (Y)', 'Callback', @(h0, hE) obj.reorderSites(obj.hCfg.siteLoc(:,2)));
-    uimenu(obj.hMenus('EditMenu'), 'Label', 'Reorder sites by shank, then Y ', 'Callback', @(h0, hE) obj.reorderSites([obj.hCfg.shankMap,obj.hCfg.siteLoc(:,2)]));
-    
+    uimenu(obj.hMenus('EditMenu'), 'Label', 'Reorder sites by shank, then Y ', 'Callback', @(h0, hE) obj.reorderSites([obj.hCfg.shankMap, obj.hCfg.siteLoc(:,2), obj.hCfg.siteLoc(:,1)]));
     obj.hMenus('ViewMenu') = uimenu(hFig, 'Label', 'View');
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'Show traces', 'Callback', @(hO, hE) obj.showTraces());
     uimenu(obj.hMenus('ViewMenu'), 'Label', 'View all [R]', 'Callback', @(hO, hE) obj.keyPressFigWav([], struct('Key', 'r')));
