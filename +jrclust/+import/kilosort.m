@@ -147,6 +147,7 @@ if ~isempty(metafile)
     SMeta_ = jrclust.utils.loadMetadata(metafile);
     hCfg.bitScaling = SMeta_.bitScaling;
     hCfg.shankMap = SMeta_.shanks(hCfg.siteMap) + 1;
+    hCfg.probePad = SMeta_.probePad;
 else
     hCfg.bitScaling = 1;
 end

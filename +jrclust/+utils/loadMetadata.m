@@ -122,4 +122,13 @@ function S = loadMetadata(metafile)
     if isfield(S, 'gainLFP')
         S.bitScalingLFP = S.scale * S.gain / S.gainLFP;
     end
+
+    % set probe pad size to 6 um for type 1100 and 1110 (actual pad size is 
+    % 5 um, but the map is more attractive without the gaps
+    if S.imDatPrb_type == 1100 || S.imDatPrb_type == 1110
+        S.probePad = [6,6];
+    else
+        S.probePad = [12,12];
+    end
+
 end
