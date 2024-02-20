@@ -120,12 +120,67 @@ function tracesFilt = plotFigTraces(hFigTraces, hCfg, tracesRaw, resetAxis, hClu
             end
         else % different color for each cluster
             inRangeClusters = hClust.spikeClusters(spikesInRange);
-            spikeColors = [jet(hClust.nClusters); 0 0 0];
-            lineWidths = (mod((1:hClust.nClusters) - 1, 3) + 1)'/2 + 0.5;  %(randi(3, S_clu.nClusters, 1)+1)/2;
+            if hFigTraces.figData.currUnit < 0 
+                spikeColors = [jet(hClust.nClusters); 0 0 0];
+                spikeColors = spikeColors(randperm(size(spikeColors, 1)), :);
+                lineWidths = (mod((1:hClust.nClusters) - 1, 3) + 1)'/2 + 0.5;  %(randi(3, S_clu.nClusters, 1)+1)/2;
+                % shuffle linewidths
+                lineWidths = lineWidths(randperm(size(lineWidths, 1)), :);
+                % if cluster color figure is showing, close it
+                % Check for existing table of cluster labels and close
+                figList = findobj('type','figure');
+                figNames = {figList.Name};
+                oldIndex = find(contains(figNames,'Cluster Colors'));
+                if ~isempty(oldIndex)
+                    close(figList(oldIndex));
+                end
 
-            % shuffle colors
-            spikeColors = spikeColors(randperm(size(spikeColors, 1)), :);
-            lineWidths = lineWidths(randperm(size(lineWidths, 1)), :);
+            else
+                % black for all clusters except the selected cluster and
+                % neighbors
+                currUnit = hFigTraces.figData.currUnit;
+                currUnitCent = hClust.clusterCentroids(currUnit,:);
+                clustDistSq = (hClust.clusterCentroids(:,1) - currUnitCent(1)).^2 + ...
+                    (hClust.clusterCentroids(:,2) - currUnitCent(2)).^2;
+                [~, nearestNeighbors] = sort(clustDistSq);
+                neighborUnits = nearestNeighbors(2:6);  % currUnit = 1; 
+                spikeColors = zeros((hClust.nClusters+1),3);
+                % colors for center unit and neighbors 
+                neighborColors = [lines(6)]; 
+                spikeColors(currUnit,:) = neighborColors(1,:);
+                spikeColors(neighborUnits,:) = neighborColors(2:6,:); 
+                lineWidths = zeros([hClust.nClusters,1]);
+                lineWidths = lineWidths + 2;
+
+                % Check for existing table of cluster labels and close
+                figList = findobj('type','figure');
+                figNames = {figList.Name};
+                oldIndex = find(contains(figNames,'Cluster Colors'));
+                if ~isempty(oldIndex)
+                    close(figList(oldIndex));
+                end
+
+                h2 = figure('Name','Cluster Colors','Units','normalized','Position',[0.5,0.6,0.1,0.2]);
+                dim = [0.1,0.8,0.1,0.1];
+                currStr = sprintf('cluster   peak chan');
+                annotation(h2,'Textbox',dim,'String',currStr,'FontSize',14,'FontWeight','Bold','Color',[0,0,0],'LineStyle','None');
+                dim(2) = dim(2) - 0.1;
+                currStr = sprintf('  %d            %d',currUnit, hClust.clusterSites(currUnit));
+                annotation(h2,'Textbox',dim,'String',currStr,'FontSize',14,'FontWeight','Bold','Color',neighborColors(1,:),'LineStyle','None');
+                for i = 1:5
+                    dim(2) = dim(2) - 0.1;
+                    currStr = sprintf('  %d            %d',neighborUnits(i), hClust.clusterSites(neighborUnits(i)));
+                    annotation(h2,'Textbox',dim,'String',currStr,'FontSize',14,'FontWeight','Bold','Color',neighborColors(i+1,:),'LineStyle','None')
+                end
+%                 figList = findobj('type','figure');
+%                 figTags = {figList.Tag};
+%                 tracesIndex = find(contains(figTags,'FigTraces'));
+%                 if ~isempty(tracesIndex)
+%                     %fprintf('switch to traces\n');
+%                     traceHandle = figList(tracesIndex);
+%                     figure(traceHandle)
+%                 end
+            end
 
             nSpikes = numel(spikeTimes);
 

@@ -10,6 +10,8 @@ classdef TracesController < jrclust.interfaces.FigureController
         hFigPSD;
         hFigTraces;
 
+        currUnit;
+
         showFilter;
         showGrid;
         showSpikes;
@@ -38,12 +40,31 @@ classdef TracesController < jrclust.interfaces.FigureController
                 case 'uparrow'
                     obj.hFigTraces.figData.maxAmp = obj.hFigTraces.figData.maxAmp*sqrt(2)^-factor;
                     obj.updateFigTraces(0);
+                    % bring Traces window back to front
+                    figList = findobj('type','figure');
+                    figTags = {figList.Tag};
+                    tracesIndex = find(contains(figTags,'FigTraces'));
+                    if ~isempty(tracesIndex)
+                        %fprintf('switch to traces\n');
+                        traceHandle = figList(tracesIndex);
+                        figure(traceHandle)
+                    end
 
                 case 'downarrow'
                     obj.hFigTraces.figData.maxAmp = obj.hFigTraces.figData.maxAmp*sqrt(2)^factor;
                     obj.updateFigTraces(0);
+                    % bring Traces window back to front
+                    figList = findobj('type','figure');
+                    figTags = {figList.Tag};
+                    tracesIndex = find(contains(figTags,'FigTraces'));
+                    if ~isempty(tracesIndex)
+                        %fprintf('switch to traces\n');
+                        traceHandle = figList(tracesIndex);
+                        figure(traceHandle)
+                    end
 
-                case {'leftarrow', 'rightarrow', 'j', 'home', 'end'}
+
+                case {'leftarrow', 'rightarrow', 'j', 'home', 'end', 'n'}
                     switch lower(hEvent.Key)
                         case 'leftarrow'
                             if obj.hFigTraces.figData.windowBounds(1) == 1
@@ -85,18 +106,61 @@ classdef TracesController < jrclust.interfaces.FigureController
                             catch
                                 return;
                             end
-                    end % switch
 
+                       case 'n'
+                            if obj.currUnit < 1
+                                jrclust.utils.qMsgBox('No unit selected', 1);
+                                return;  % no currUnit set
+                            end
+                            
+                            st = obj.hClust.spikeTimes(obj.hClust.spikeClusters==obj.currUnit);
+                            currBounds = obj.hFigTraces.figData.windowBounds;
+                            nextSpikeIndex = find(st>currBounds(2),1,'first');
+                            if isempty(nextSpikeIndex)
+                                jrclust.utils.qMsgBox('Passed last spike', 1);
+                                return;
+                            else
+                                nextSpikeTime = st(nextSpikeIndex);
+                                newLHS  = nextSpikeTime - floor(obj.hFigTraces.figData.windowWidth/2);
+                                newBounds = [newLHS, newLHS + obj.hFigTraces.figData.windowWidth-1 ];
+                                if newBounds(2) > obj.hFigTraces.figData.nSamplesTotal
+                                    jrclust.utils.qMsgBox('Reached end of file', 1);
+                                    return;
+                                else
+                                    windowBounds = double(newBounds);
+                
+                                end
+                            end
+
+                    end % switch
+                    curr_gca = gca;
+                    % calculate the x range and relative position in sec                    
+                    dispX_width_sec = curr_gca.XLim(2) - curr_gca.XLim(1);
+                    dispX_start_sec = curr_gca.XLim(1) - obj.hFigTraces.figData.windowBounds(1)/obj.hCfg.sampleRate;
+                    dispY = curr_gca.YLim;
                     nTimeTraces = obj.hCfg.nSegmentsTraces;
                     multiBounds = jrclust.views.sampleSkip(windowBounds, obj.hFigTraces.figData.nSamplesTotal, nTimeTraces);
 
                     tracesRaw_ = cellfun(@(lims) obj.hRec.readRawROI(obj.hCfg.siteMap, lims(1):lims(2)), multiBounds, 'UniformOutput', 0);
                     obj.tracesRaw = jrclust.utils.neCell2mat(tracesRaw_);
-
+                    
                     obj.tracesRaw = u2i(obj.tracesRaw);
                     obj.hFigTraces.figData.windowBounds = windowBounds;
                     obj.updateFigTraces(1);
-
+                    % reset display to last pan/zoom
+                    figList = findobj('type','figure');
+                    figTags = {figList.Tag};
+                    tracesIndex = find(contains(figTags,'FigTraces'));
+                    if ~isempty(tracesIndex)
+                        %fprintf('switch to traces\n');
+                        traceHandle = figList(tracesIndex);
+                        figure(traceHandle)
+                    end
+                    new_dispX_start = obj.hFigTraces.figData.windowBounds(1)/double(obj.hCfg.sampleRate) + dispX_start_sec;
+                    new_dispX_end = new_dispX_start + dispX_width_sec;
+                    xlim([new_dispX_start,new_dispX_end])
+                    ylim(dispY);
+                    
                 case 'c' % channel query
                     jrclust.utils.qMsgBox('Draw a rectangle', 1);
                     obj.hFigTraces.addPlot('hRect', @imrect);
@@ -152,6 +216,8 @@ classdef TracesController < jrclust.interfaces.FigureController
                 case 'h'
                     jrclust.utils.qMsgBox(obj.hFigTraces.figData.helpText, 1);
 
+
+
                 case 'p' % power spectrum
                     iSite = jrclust.utils.inputdlgNum(sprintf('Site# to show (1-%d, 0 for all)', obj.hCfg.nSites), 'Site#', 0);
 
@@ -180,9 +246,51 @@ classdef TracesController < jrclust.interfaces.FigureController
 
                 case 's' %show/hide spikes
                     obj.toggleSpikes();
+                    figList = findobj('type','figure');
+                    figTags = {figList.Tag};
+                    tracesIndex = find(contains(figTags,'FigTraces'));
+                    if ~isempty(tracesIndex)
+                        %fprintf('switch to traces\n');
+                        traceHandle = figList(tracesIndex);
+                        figure(traceHandle)
+                    end
+
 
                 case 't' %show/hide traces
                     obj.toggleTraces();
+
+                case 'u' %set current unit
+                    currStr = sprintf('%d',obj.currUnit);
+                    dlgAns = inputdlg('Set current unit', 'current unit', 1, {currStr});
+
+                    if isempty(dlgAns)
+                        return;
+                    end
+                    
+                    newUnit = floor(str2double(dlgAns));
+                    if (newUnit > 0 ) && (newUnit < obj.hClust.nClusters)
+                        obj.currUnit = newUnit;
+                        obj.hFigTraces.figData.currUnit = newUnit;
+                    else
+                        obj.currUnit = -1;
+                        obj.hFigTraces.figData.currUnit = -1;
+                        return;
+                    end
+
+                    % If spikes are currently on, toggle off and on to
+                    % update. If not, leave up to user
+                    if obj.showSpikes
+                        obj.toggleSpikes();
+                        obj.toggleSpikes();
+                        figList = findobj('type','figure');
+                        figTags = {figList.Tag};
+                        tracesIndex = find(contains(figTags,'FigTraces'));
+                        if ~isempty(tracesIndex)
+                            %fprintf('switch to traces\n');
+                            traceHandle = figList(tracesIndex);
+                            figure(traceHandle)
+                        end
+                    end
             end % switch
         end
     end
@@ -342,7 +450,14 @@ classdef TracesController < jrclust.interfaces.FigureController
                 '[C]hannel query', ...
                 '[P]ower spectrum', ...
                 '[E]xport to workspace', ...
+                '---------', ...
+                '[U]nit set current unit', ...
+                '[N]ext spike in current unit', ...
             }; % TODO: '[A]ux channel display'
+            
+            % TODO -- set default to -1, add UI to set
+            obj.currUnit = -1;
+            figData.currUnit = obj.currUnit;
 
             obj.showFilter = 0;
             figData.filter = 'off';
