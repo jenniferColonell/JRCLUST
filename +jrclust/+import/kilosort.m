@@ -40,7 +40,7 @@ prm_path = [a,filesep,b,'.prm'];
 if exist(prm_path,'file')
     cfgData.template_file = prm_path;
 end
-hCfg = jrclust.Config(cfgData);
+
 
 % load spike data
 amplitudes = phyData.amplitudes;
@@ -145,10 +145,14 @@ end
 % load metafile, set bitScaling
 if ~isempty(metafile)
     SMeta_ = jrclust.utils.loadMetadata(metafile);
+    cfgData.shankMap = SMeta_.shanks(channelMap) + 1;
+    hCfg = jrclust.Config(cfgData);
     hCfg.bitScaling = SMeta_.bitScaling;
     hCfg.shankMap = SMeta_.shanks(hCfg.siteMap) + 1;
     hCfg.probePad = SMeta_.probePad;
+
 else
+    hCfg = jrclust.Config(cfgData);
     hCfg.bitScaling = 1;
 end
 

@@ -36,16 +36,9 @@ function validateParams(obj)
     if r == 1
         obj.shankMap = obj.shankMap';
     end
-    
-    % get the number of columns on shank 1
-    shank1_ind = (obj.shankMap == 1);
-    xVals = obj.siteLoc(shank1_ind,1);
-    nCol = numel(unique(xVals));
-    fprintf('number of columns in pattern: %d\n', nCol);
 
     % nSiteDir and/or nSitesExcl may not have been specified
     if isempty(obj.nSiteDir) || isempty(obj.nSitesExcl)
-        
         siteDists = pdist2(obj.siteLoc, obj.siteLoc);
 
         % max over all sites of number of neighbors in detect radius

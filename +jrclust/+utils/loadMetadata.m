@@ -108,7 +108,7 @@ function S = loadMetadata(metafile)
             'EndOfLine', ')', 'HeaderLines', 1 );
     end
     S.shanks = double(cell2mat(C(1)));
-
+    
   
 
     %number of bits of ADC [was 16 in Chongxi original]

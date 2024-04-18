@@ -16,9 +16,11 @@ end
 
 loadPath = loadPath_;
 ls = dir(loadPath);
+
+files_to_skip{1} = 'ops.npy';  %non-standard format
 for iFile = 1:numel(ls)
     file = ls(iFile);
-    if file.isdir || isempty(regexp(file.name, 'py$', 'once'))
+    if file.isdir || isempty(regexp(file.name, 'py$', 'once')) || ismember(file.name,files_to_skip)
         continue
     end
 
